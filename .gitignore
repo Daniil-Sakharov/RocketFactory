@@ -29,3 +29,5 @@
 node_modules
 /shared/api/bundles/
 /coverage/
+/microservices-course-examples-main
+/microservices-course-homework-main

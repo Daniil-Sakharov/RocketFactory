@@ -1,0 +1,16 @@
+type: string
+enum:
+  - UNKNOWN
+  - CARD
+  - SBP
+  - CREDIT_CARD
+  - INVESTOR_MONEY
+default: UNKNOWN
+description: |
+  Методы оплаты заказа:
+  * UNKNOWN - неизвестный
+  * CARD - картой
+  * SBP - системой быстрых платежей
+  * CREDIT_CARD - кредитной картой 
+  * INVESTOR_MONEY - средствами инвестора
+example: CARD

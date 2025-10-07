@@ -1,0 +1,19 @@
+type: object
+required:
+  - order_uuid
+  - total_price
+properties:
+  order_uuid:
+    type: string
+    format: uuid
+    description: UUID заказа, который создал пользователь
+    example: "3f5a2e94-8c4b-4c0f-9b7a-1e2a5c7e9baf"
+  total_price:
+    type: number
+    format: double
+    description: Общая стоимость заказа
+    example: 123.45
+description: Ответ на созданный заказ
+example:
+  order_uuid: "3f5a2e94-8c4b-4c0f-9b7a-1e2a5c7e9baf"
+  total_price: 123.45

@@ -1,0 +1,26 @@
+# Версия конфигурации генерации
+version: v2
+# Удаляет сгенеренное ранее, то что находится в out каждого плагина.
+clean: true
+
+# Управляемый режим (рекомендуется)
+managed:
+  enabled: true
+  override:
+    # Переопределяем go_package для всех файлов
+    - file_option: go_package_prefix
+      value: github.com/Daniil-Sakharov/RocketFactory/shared/pkg/proto
+
+# Плагины для генерации кода
+plugins:
+  # Генерация основных Go структур из protobuf
+  - remote: buf.build/protocolbuffers/go
+    out: ../pkg/proto
+    opt:
+      - paths=source_relative
+
+  # Генерация gRPC сервера и клиента для Go
+  - remote: buf.build/grpc/go
+    out: ../pkg/proto
+    opt:
+      - paths=source_relative
