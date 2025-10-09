@@ -1,0 +1,13 @@
+type: object
+required:
+  - error
+  - message
+properties:
+  error:
+    type: string
+    description: Код ошибки
+    example: "CONFLICT"
+  message:
+    type: string
+    description: Описание ошибки
+    example: "Заказ уже оплачен"

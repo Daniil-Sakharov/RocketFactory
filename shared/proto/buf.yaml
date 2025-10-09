@@ -1,0 +1,25 @@
+# Версия конфигурации Buf
+version: v2
+
+# Модули (наши protobuf пакеты)
+modules:
+  - path: .
+
+# Настройки линтинга
+lint:
+  # Используем стандартные правила Google
+  use:
+    - STANDARD
+    - COMMENT_ENUM
+    - COMMENT_MESSAGE
+  # Исключения (если нужны)
+  except:
+    - RPC_RESPONSE_STANDARD_NAME
+    - RPC_REQUEST_RESPONSE_UNIQUE
+
+
+# Проверка совместимости (breaking changes)
+breaking:
+  # Используем стандартные правила
+  use:
+    - FILE
