@@ -1,0 +1,12 @@
+type: object
+required:
+  - transaction_uuid
+properties:
+  transaction_uuid:
+    type: string
+    format: uuid
+    description: UUID транзакции
+    example: "6ba7b810-9dad-11d1-80b4-00c04fd430c8"
+description: Ответ на оплаченный заказ
+example:
+  transaction_uuid: "6ba7b810-9dad-11d1-80b4-00c04fd430c8"

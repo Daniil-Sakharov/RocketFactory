@@ -1,0 +1,26 @@
+type: object
+required:
+  - user_uuid
+  - part_uuids
+properties:
+  user_uuid:
+    type: string
+    format: uuid
+    description: UUID пользователя, создающего заказ
+    example: "123e4567-e89b-12d3-a456-426614174000"
+  part_uuids:
+    type: array
+    description: Список UUID деталей, которые пользователь хочет заказать
+    items:
+      type: string
+      format: uuid
+    minItems: 1
+    example:
+      - "550e8400-e29b-41d4-a716-446655440000"
+      - "6ba7b810-9dad-11d1-80b4-00c04fd430c8"
+description: Запрос на создание нового заказа
+example:
+  user_uuid: "123e4567-e89b-12d3-a456-426614174000"
+  part_uuids:
+    - "550e8400-e29b-41d4-a716-446655440000"
+    - "6ba7b810-9dad-11d1-80b4-00c04fd430c8"
