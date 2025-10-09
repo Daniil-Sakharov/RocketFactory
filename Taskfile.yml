@@ -330,9 +330,9 @@ tasks:
         fi
         
         # Извлекаем UUID заказа с учетом разных форматов JSON
-        ORDER_UUID=$(echo $ORDER_RESPONSE | grep -o '"uuid":"[^"]*' | cut -d'"' -f4)
+        ORDER_UUID=$(echo $ORDER_RESPONSE | grep -o '"order_uuid":"[^"]*' | cut -d'"' -f4)
         if [ -z "$ORDER_UUID" ]; then
-          ORDER_UUID=$(echo $ORDER_RESPONSE | grep -o '"uuid": "[^"]*' | cut -d'"' -f4)
+          ORDER_UUID=$(echo $ORDER_RESPONSE | grep -o '"order_uuid": "[^"]*' | cut -d'"' -f4)
           if [ -z "$ORDER_UUID" ]; then
             echo "❌ Не удалось извлечь UUID заказа из ответа."
             echo "🔍 Ответ сервера: $ORDER_RESPONSE"
@@ -373,7 +373,7 @@ tasks:
         echo "💰 Тест 6: Оплата заказа (REST API)"
         PAY_RESPONSE=$(curl -s -X POST "http://localhost:8080/api/v1/orders/$ORDER_UUID/pay" \
           -H "Content-Type: application/json" \
-          -d "{\"payment_method\":\"PAYMENT_METHOD_CARD\"}")
+          -d "{\"payment_method\":\"CARD\"}")
         
         if [[ "$PAY_RESPONSE" == *"error"* ]]; then
           echo "❌ Ошибка при оплате заказа."
@@ -412,9 +412,9 @@ tasks:
         fi
         
         # Извлекаем UUID второго заказа с учетом разных форматов JSON
-        ORDER2_UUID=$(echo $ORDER2_RESPONSE | grep -o '"uuid":"[^"]*' | cut -d'"' -f4)
+        ORDER2_UUID=$(echo $ORDER2_RESPONSE | grep -o '"order_uuid":"[^"]*' | cut -d'"' -f4)
         if [ -z "$ORDER2_UUID" ]; then
-          ORDER2_UUID=$(echo $ORDER2_RESPONSE | grep -o '"uuid": "[^"]*' | cut -d'"' -f4)
+          ORDER2_UUID=$(echo $ORDER2_RESPONSE | grep -o '"order_uuid": "[^"]*' | cut -d'"' -f4)
           if [ -z "$ORDER2_UUID" ]; then
             echo "❌ Не удалось извлечь UUID второго заказа из ответа."
             echo "🔍 Ответ сервера: $ORDER2_RESPONSE"
@@ -460,3 +460,107 @@ tasks:
         
         echo
         echo "🎉 Все тесты API успешно выполнены!"
+
+  swagger:generate-json:
+    desc: "Конвертирует OpenAPI YAML в JSON для Swagger UI"
+    deps: [ yq:install ]
+    summary: |
+      Конвертирует OpenAPI спецификацию из YAML формата в JSON
+      для использования в Swagger UI. Использует yq для конвертации.
+    cmds:
+      - |
+        echo "🔄 Конвертируем OpenAPI YAML в JSON..."
+        mkdir -p api
+        {{.YQ}} eval -o=json {{.OPEN_API_ORDER_V1_BUNDLE}} > api/swagger.json
+        echo "✅ Создан файл api/swagger.json"
+
+  swagger:generate-html:
+    desc: "Создает HTML файл для Swagger UI"
+    summary: |
+      Генерирует HTML файл с встроенным Swagger UI для просмотра
+      OpenAPI документации в браузере.
+    cmds:
+      - |
+        echo "📝 Создаем HTML файл для Swagger UI..."
+        mkdir -p api
+        cat > api/swagger-ui.html << 'EOF'
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>OrderService API Documentation</title>
+            <link rel="stylesheet" type="text/css" href="https://unpkg.com/swagger-ui-dist@5.9.0/swagger-ui.css" />
+            <style>
+                html {
+                    box-sizing: border-box;
+                    overflow: -moz-scrollbars-vertical;
+                    overflow-y: scroll;
+                }
+                *, *:before, *:after {
+                    box-sizing: inherit;
+                }
+                body {
+                    margin:0;
+                    background: #fafafa;
+                }
+            </style>
+        </head>
+        <body>
+            <div id="swagger-ui"></div>
+            <script src="https://unpkg.com/swagger-ui-dist@5.9.0/swagger-ui-bundle.js"></script>
+            <script src="https://unpkg.com/swagger-ui-dist@5.9.0/swagger-ui-standalone-preset.js"></script>
+            <script>
+                window.onload = function() {
+                    const ui = SwaggerUIBundle({
+                        url: '/swagger.json',
+                        dom_id: '#swagger-ui',
+                        deepLinking: true,
+                        presets: [
+                            SwaggerUIBundle.presets.apis,
+                            SwaggerUIStandalonePreset
+                        ],
+                        plugins: [
+                            SwaggerUIBundle.plugins.DownloadUrl
+                        ],
+                        layout: "StandaloneLayout",
+                        tryItOutEnabled: true,
+                        requestInterceptor: function(request) {
+                            // Можно добавить заголовки или модифицировать запросы
+                            return request;
+                        }
+                    });
+                };
+            </script>
+        </body>
+        </html>
+        EOF
+        echo "✅ Создан файл api/swagger-ui.html"
+
+  swagger:generate:
+    desc: "Генерирует все файлы для Swagger UI"
+    deps: [ redocly-cli:bundle ]
+    summary: |
+      Полная генерация Swagger UI документации:
+      1. Собирает OpenAPI bundle из исходных файлов
+      2. Конвертирует YAML в JSON
+      3. Создает HTML интерфейс
+      
+      После выполнения доступно:
+      - http://localhost:8080/swagger-ui.html - интерфейс документации
+      - http://localhost:8080/swagger.json - OpenAPI спецификация
+    cmds:
+      - task: swagger:generate-json
+      - task: swagger:generate-html
+      - |
+        echo "🎉 Swagger UI готов!"
+        echo "📖 Документация будет доступна по адресу: http://localhost:8080/swagger-ui.html"
+        echo "📄 OpenAPI спецификация: http://localhost:8080/swagger.json"
+
+  swagger:clean:
+    desc: "Удаляет сгенерированные файлы Swagger UI"
+    cmds:
+      - |
+        echo "🧹 Очищаем сгенерированные файлы Swagger UI..."
+        rm -f api/swagger.json api/swagger-ui.html
+        echo "✅ Файлы Swagger UI удалены"

@@ -4,7 +4,7 @@ info:
   version: 1.0.0
   description: API для работы с заказами
 x-ogen:
-  target: ./pkg/openapi/order/v1
+  target: .shared/pkg/openapi/order/v1
   package: order_v1
   clean: true
 
@@ -42,7 +42,7 @@ components:
 
 
     # Enums
-  OrderStatus:
-    $ref: './components/enums/order_status.yaml'
-  PaymentMethod:
-    $ref: './components/enums/payment_method.yaml'
+    OrderStatus:
+      $ref: './components/enums/order_status.yaml'
+    PaymentMethod:
+      $ref: './components/enums/payment_method.yaml'
