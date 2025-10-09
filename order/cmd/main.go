@@ -5,13 +5,15 @@ import (
 	"log"
 	"net/http"
 	"sync"
+	"time"
+
+	"github.com/google/uuid"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 
 	orderV1 "github.com/Daniil-Sakharov/RocketFactory/shared/pkg/openapi/order/v1"
 	inventoryV1 "github.com/Daniil-Sakharov/RocketFactory/shared/pkg/proto/inventory/v1"
 	paymentV1 "github.com/Daniil-Sakharov/RocketFactory/shared/pkg/proto/payment/v1"
-	"github.com/google/uuid"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
 )
 
 const (
@@ -240,19 +242,39 @@ func (s *OrderService) CancelOrder(ctx context.Context, params orderV1.CancelOrd
 	return &orderV1.CancelOrderNoContent{}, nil
 }
 
-func main() {
-	// Подключение к gRPC сервисам
+func setupGRPCConnections() (*grpc.ClientConn, *grpc.ClientConn, error) {
 	inventoryConn, err := grpc.NewClient(inventoryServiceAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
-		log.Fatalf("Failed to connect to inventory service: %v", err)
+		return nil, nil, err
 	}
-	defer inventoryConn.Close()
 
 	paymentConn, err := grpc.NewClient(paymentServiceAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
-		log.Fatalf("Failed to connect to payment service: %v", err)
+		if closeErr := inventoryConn.Close(); closeErr != nil {
+			log.Printf("Error closing inventory connection: %v", closeErr)
+		}
+		return nil, nil, err
 	}
-	defer paymentConn.Close()
+
+	return inventoryConn, paymentConn, nil
+}
+
+func run() error {
+	// Подключение к gRPC сервисам
+	inventoryConn, paymentConn, err := setupGRPCConnections()
+	if err != nil {
+		return err
+	}
+	defer func() {
+		if err := inventoryConn.Close(); err != nil {
+			log.Printf("Error closing inventory connection: %v", err)
+		}
+	}()
+	defer func() {
+		if err := paymentConn.Close(); err != nil {
+			log.Printf("Error closing payment connection: %v", err)
+		}
+	}()
 
 	service := &OrderService{
 		storage:         NewOrderStorage(),
@@ -262,7 +284,7 @@ func main() {
 
 	server, err := orderV1.NewServer(service)
 	if err != nil {
-		log.Fatalf("Failed to create server: %v", err)
+		return err
 	}
 
 	fileServer := http.FileServer(http.Dir("api"))
@@ -287,7 +309,20 @@ func main() {
 	log.Printf("📖 API Documentation available at: http://%s/swagger-ui.html", orderServiceAddr)
 	log.Printf("🔗 Direct API access: http://%s/api/v1/orders", orderServiceAddr)
 
-	if err := http.ListenAndServe(orderServicePort, httpMux); err != nil {
-		log.Fatalf("Failed to start server: %v", err)
+	// Создаем HTTP сервер с таймаутами
+	httpServer := &http.Server{
+		Addr:         orderServicePort,
+		Handler:      httpMux,
+		ReadTimeout:  15 * time.Second,
+		WriteTimeout: 15 * time.Second,
+		IdleTimeout:  60 * time.Second,
+	}
+
+	return httpServer.ListenAndServe()
+}
+
+func main() {
+	if err := run(); err != nil {
+		log.Fatalf("Application failed: %v", err)
 	}
 }

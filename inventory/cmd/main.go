@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"google.golang.org/protobuf/types/known/timestamppb"
 	"log"
 	"net"
 	"os"
@@ -12,9 +11,11 @@ import (
 	"sync"
 	"syscall"
 
-	inventoryv1 "github.com/Daniil-Sakharov/RocketFactory/shared/pkg/proto/inventory/v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
+	"google.golang.org/protobuf/types/known/timestamppb"
+
+	inventoryv1 "github.com/Daniil-Sakharov/RocketFactory/shared/pkg/proto/inventory/v1"
 )
 
 const grpcPort = 50051
@@ -101,7 +102,7 @@ func containsCategory(slice []inventoryv1.Category, item inventoryv1.Category) b
 	return false
 }
 
-func hasAnyTag(filterTags []string, partTags []string) bool {
+func hasAnyTag(filterTags, partTags []string) bool {
 	for _, filterTag := range filterTags {
 		for _, partTag := range partTags {
 			if filterTag == partTag {
@@ -274,6 +275,7 @@ func createTestData() map[string]*inventoryv1.Part {
 		},
 	}
 }
+
 func main() {
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", grpcPort))
 	if err != nil {
