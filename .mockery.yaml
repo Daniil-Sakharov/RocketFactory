@@ -1,0 +1,37 @@
+with-expecter: true
+boilerplate-file: ".mockery_boilerplate_text.txt"
+dir: "{{.InterfaceDir}}/mocks"
+filename: "mock_{{.InterfaceName}}.go"
+outpkg: "mocks"
+mockname: "{{.InterfaceName}}"
+resolve-type-alias: False
+issue-845-fix: True
+
+# Генерируем моки для всех интерфейсов в проекте
+packages:
+  # Order Service
+  github.com/Daniil-Sakharov/RocketFactory/order/internal/service:
+    config:
+      include-regex: ".*Service"
+
+  github.com/Daniil-Sakharov/RocketFactory/order/internal/repository:
+    config:
+      include-regex: ".*Repository"
+
+  github.com/Daniil-Sakharov/RocketFactory/order/internal/client/grpc:
+    config:
+      include-regex: ".*(Client)"
+
+  # Payment Service
+  github.com/Daniil-Sakharov/RocketFactory/payment/internal/service:
+    config:
+      include-regex: ".*Service"
+
+  # Inventory Service
+  github.com/Daniil-Sakharov/RocketFactory/inventory/internal/service:
+    config:
+      include-regex: ".*Service"
+
+  github.com/Daniil-Sakharov/RocketFactory/inventory/internal/repository:
+    config:
+      include-regex: ".*Repository"

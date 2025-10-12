@@ -72,6 +72,7 @@ func (s *ConflictError) SetMessage(val string) {
 }
 
 func (*ConflictError) cancelOrderRes() {}
+func (*ConflictError) createOrderRes() {}
 func (*ConflictError) payOrderRes()    {}
 
 // Запрос на создание нового заказа.
@@ -285,6 +286,7 @@ func (s *NotFoundError) SetMessage(val string) {
 }
 
 func (*NotFoundError) cancelOrderRes() {}
+func (*NotFoundError) createOrderRes() {}
 func (*NotFoundError) getOrderRes()    {}
 func (*NotFoundError) payOrderRes()    {}
 

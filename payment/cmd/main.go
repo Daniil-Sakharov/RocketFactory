@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"log"
 	"net"
@@ -9,32 +8,21 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/google/uuid"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 
+	apiv1 "github.com/Daniil-Sakharov/RocketFactory/payment/internal/api/payment/v1"
+	paymentService "github.com/Daniil-Sakharov/RocketFactory/payment/internal/service/payment"
 	paymentv1 "github.com/Daniil-Sakharov/RocketFactory/shared/pkg/proto/payment/v1"
 )
 
 const grpcPort = 50052
 
-type paymentService struct {
-	paymentv1.UnimplementedPaymentServiceServer
-}
-
-func (s *paymentService) PayOrder(_ context.Context, _ *paymentv1.PayOrderRequest) (*paymentv1.PayOrderResponse, error) {
-	transactionUUID := uuid.NewString()
-	log.Printf("Оплата прошла успешно, transaction_uuid: %s", transactionUUID)
-	return &paymentv1.PayOrderResponse{
-		TransactionUuid: transactionUUID,
-	}, nil
-}
-
 func main() {
+	// Создаем TCP listener
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", grpcPort))
 	if err != nil {
-		log.Printf("Ошибка слушания tcp соединения на порту %d: %v\n", grpcPort, err)
-		return
+		log.Fatalf("Ошибка слушания tcp соединения на порту %d: %v\n", grpcPort, err)
 	}
 	defer func() {
 		if err := lis.Close(); err != nil {
@@ -42,27 +30,35 @@ func main() {
 		}
 	}()
 
-	s := grpc.NewServer()
+	// Создаем Service слой
+	service := paymentService.New()
 
-	service := &paymentService{}
+	// Создаем API слой
+	api := apiv1.New(service)
 
-	paymentv1.RegisterPaymentServiceServer(s, service)
+	// Создаем gRPC сервер
+	grpcServer := grpc.NewServer()
 
-	reflection.Register(s)
+	// Регистрируем API
+	paymentv1.RegisterPaymentServiceServer(grpcServer, api)
 
+	// Включаем рефлексию для grpcurl
+	reflection.Register(grpcServer)
+
+	// Запускаем сервер в горутине
 	go func() {
-		log.Printf("🚀 gRPC server listening on %d\n", grpcPort)
-		err = s.Serve(lis)
-		if err != nil {
-			log.Printf("failed to serve: %v\n", err)
-			return
+		log.Printf("🚀 PaymentService gRPC server listening on port %d\n", grpcPort)
+		if err := grpcServer.Serve(lis); err != nil {
+			log.Fatalf("Failed to serve: %v\n", err)
 		}
 	}()
+
 	// Graceful shutdown
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
-	log.Println("🛑 Shutting down gRPC server...")
-	s.GracefulStop()
-	log.Println("✅ Server stopped")
+
+	log.Println("🛑 Shutting down PaymentService gRPC server...")
+	grpcServer.GracefulStop()
+	log.Println("✅ PaymentService stopped")
 }
