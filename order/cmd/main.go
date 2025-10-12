@@ -116,7 +116,6 @@ func run() error {
 	}
 
 	return httpServer.ListenAndServe()
-
 }
 
 func main() {

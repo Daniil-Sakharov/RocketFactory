@@ -10,7 +10,6 @@ import (
 	orderV1 "github.com/Daniil-Sakharov/RocketFactory/shared/pkg/openapi/order/v1"
 )
 
-
 func CreateOrderRequestToServiceModel(req orderV1.CreateOrderRequest) *dto.CreateOrderRequest {
 	return &dto.CreateOrderRequest{
 		UserUUID:  req.UserUUID.String(),
@@ -19,7 +18,7 @@ func CreateOrderRequestToServiceModel(req orderV1.CreateOrderRequest) *dto.Creat
 }
 
 func CreateOrderResponseFromEntity(order *entity.Order) *orderV1.CreateOrderResponse {
-	orderUUID, _ := uuid.Parse(order.OrderUUID)
+	orderUUID := uuid.MustParse(order.OrderUUID)
 
 	return &orderV1.CreateOrderResponse{
 		OrderUUID:  orderUUID,
@@ -28,8 +27,8 @@ func CreateOrderResponseFromEntity(order *entity.Order) *orderV1.CreateOrderResp
 }
 
 func GetOrderResponseFromEntity(order *entity.Order) *orderV1.GetOrderResponse {
-	orderUUID, _ := uuid.Parse(order.OrderUUID)
-	userUUID, _ := uuid.Parse(order.UserUUID)
+	orderUUID := uuid.MustParse(order.OrderUUID)
+	userUUID := uuid.MustParse(order.UserUUID)
 
 	partUUIDs := make([]uuid.UUID, 0, len(order.PartUUIDs))
 	for _, partUUIDStr := range order.PartUUIDs {
@@ -61,7 +60,6 @@ func GetOrderResponseFromEntity(order *entity.Order) *orderV1.GetOrderResponse {
 	}
 }
 
-
 func PayOrderRequestToServiceModel(req orderV1.PayOrderRequest, orderUUID string) *dto.PayOrderRequest {
 	return &dto.PayOrderRequest{
 		OrderUUID:     orderUUID,
@@ -69,13 +67,11 @@ func PayOrderRequestToServiceModel(req orderV1.PayOrderRequest, orderUUID string
 	}
 }
 
-
 func GetOrderRequestToServiceModel(orderUUID string) *dto.GetOrderRequest {
 	return &dto.GetOrderRequest{
 		OrderUUID: orderUUID,
 	}
 }
-
 
 func CancelOrderRequestToServiceModel(orderUUID string) *dto.CancelOrderRequest {
 	return &dto.CancelOrderRequest{
@@ -84,13 +80,12 @@ func CancelOrderRequestToServiceModel(orderUUID string) *dto.CancelOrderRequest 
 }
 
 func PayOrderResponseFromEntity(order *entity.Order) *orderV1.PayOrderResponse {
-	transactionUUID, _ := uuid.Parse(order.TransactionUUID)
+	transactionUUID := uuid.MustParse(order.TransactionUUID)
 
 	return &orderV1.PayOrderResponse{
 		TransactionUUID: transactionUUID,
 	}
 }
-
 
 func OrderStatusToOpenAPI(status vo.OrderStatus) orderV1.OrderStatus {
 	switch status {
@@ -118,7 +113,6 @@ func OrderStatusFromOpenAPI(status orderV1.OrderStatus) vo.OrderStatus {
 	}
 }
 
-
 func PaymentMethodToOpenAPI(method vo.PaymentMethod) orderV1.PaymentMethod {
 	switch method {
 	case vo.PaymentMethodCARD:
@@ -133,7 +127,6 @@ func PaymentMethodToOpenAPI(method vo.PaymentMethod) orderV1.PaymentMethod {
 		return orderV1.PaymentMethodUNKNOWN
 	}
 }
-
 
 func PaymentMethodFromOpenAPI(method orderV1.PaymentMethod) vo.PaymentMethod {
 	switch method {

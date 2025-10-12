@@ -11,10 +11,9 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 
-	paymentv1 "github.com/Daniil-Sakharov/RocketFactory/shared/pkg/proto/payment/v1"
-
 	apiv1 "github.com/Daniil-Sakharov/RocketFactory/payment/internal/api/payment/v1"
 	paymentService "github.com/Daniil-Sakharov/RocketFactory/payment/internal/service/payment"
+	paymentv1 "github.com/Daniil-Sakharov/RocketFactory/shared/pkg/proto/payment/v1"
 )
 
 const grpcPort = 50052

@@ -2,16 +2,18 @@ package v1
 
 import (
 	"context"
-	"github.com/Daniil-Sakharov/RocketFactory/inventory/internal/service/mocks"
-	"github.com/stretchr/testify/suite"
 	"testing"
+
+	"github.com/stretchr/testify/suite"
+
+	"github.com/Daniil-Sakharov/RocketFactory/inventory/internal/service/mocks"
 )
 
 type ServiceSuite struct {
 	suite.Suite
-	ctx            context.Context
+	ctx         context.Context
 	partService *mocks.PartService
-	api *api
+	api         *api
 }
 
 func (s *ServiceSuite) SetupTest() {

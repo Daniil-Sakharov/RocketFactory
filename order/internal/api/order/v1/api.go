@@ -5,8 +5,9 @@ import (
 	orderV1 "github.com/Daniil-Sakharov/RocketFactory/shared/pkg/openapi/order/v1"
 )
 
-	var _ orderV1.Handler = (*api)(nil)
-type api struct{
+var _ orderV1.Handler = (*api)(nil)
+
+type api struct {
 	service service.OrderService
 }
 

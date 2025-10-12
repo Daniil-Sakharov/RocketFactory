@@ -10,5 +10,5 @@ var (
 	ErrEmptyPartUUIDs       = errors.New("part UUIDs are empty")
 	ErrPartsNotFound        = errors.New("parts not found")
 	ErrInvalidPaymentMethod = errors.New("invalid payment method")
-	ErrUnknownError = errors.New("unknown error")
+	ErrUnknownError         = errors.New("unknown error")
 )

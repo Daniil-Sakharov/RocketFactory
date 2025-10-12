@@ -3,6 +3,7 @@ package order
 import (
 	"context"
 	"errors"
+
 	"github.com/Daniil-Sakharov/RocketFactory/order/internal/model"
 	"github.com/Daniil-Sakharov/RocketFactory/order/internal/model/dto"
 	"github.com/Daniil-Sakharov/RocketFactory/order/internal/model/entity"
@@ -27,18 +28,18 @@ func (s *service) Pay(ctx context.Context, req *dto.PayOrderRequest) (*entity.Or
 	}
 
 	newOrder := &entity.Order{
-		OrderUUID: order.OrderUUID,
-		UserUUID: order.UserUUID,
-		PartUUIDs: order.PartUUIDs,
-		TotalPrice: order.TotalPrice,
+		OrderUUID:       order.OrderUUID,
+		UserUUID:        order.UserUUID,
+		PartUUIDs:       order.PartUUIDs,
+		TotalPrice:      order.TotalPrice,
 		TransactionUUID: response.TransactionUUID,
-		PaymentMethod: req.PaymentMethod,
-		Status: vo.OrderStatusPAID,
+		PaymentMethod:   req.PaymentMethod,
+		Status:          vo.OrderStatusPAID,
 	}
 
 	err = s.orderRepository.Update(ctx, newOrder)
 	if err != nil {
-		if errors.Is(err,model.ErrOrderNotFound) {
+		if errors.Is(err, model.ErrOrderNotFound) {
 			return nil, err
 		}
 		return nil, model.ErrUnknownError

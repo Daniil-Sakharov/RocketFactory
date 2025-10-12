@@ -35,7 +35,6 @@ func OrderFromRepoModel(repoOrder *repoModel.Order) *entity.Order {
 	}
 }
 
-
 // StatusToRepoModel конвертирует Domain OrderStatus → Repository OrderStatus
 func StatusToRepoModel(status vo.OrderStatus) repoModel.OrderStatus {
 	switch status {

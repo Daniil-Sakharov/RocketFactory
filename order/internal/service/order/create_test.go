@@ -2,11 +2,13 @@ package order
 
 import (
 	"errors"
+
+	"github.com/brianvoe/gofakeit/v7"
+	"github.com/stretchr/testify/mock"
+
 	"github.com/Daniil-Sakharov/RocketFactory/order/internal/model/dto"
 	"github.com/Daniil-Sakharov/RocketFactory/order/internal/model/entity"
 	"github.com/Daniil-Sakharov/RocketFactory/order/internal/model/vo"
-	"github.com/brianvoe/gofakeit/v7"
-	"github.com/stretchr/testify/mock"
 )
 
 func (s *ServiceSuite) TestCreateOrderSuccess() {
@@ -44,7 +46,6 @@ func (s *ServiceSuite) TestCreateOrderSuccess() {
 		}
 
 		expectedTotalPrice = 25000150.00
-
 	)
 
 	s.inventoryClient.On("ListParts", s.ctx, filter).Return(partsFromInventory, nil)

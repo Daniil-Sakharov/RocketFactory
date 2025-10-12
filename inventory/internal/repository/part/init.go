@@ -190,9 +190,9 @@ func (r *repository) InitTestData() {
 			},
 			Tags: []string{"топливо", "бак", "кислород"},
 			Metadata: map[string]interface{}{
-				"объем":       5000.0,
-				"давление":    300.0,
-				"изоляция":    "криогенная",
+				"объем":    5000.0,
+				"давление": 300.0,
+				"изоляция": "криогенная",
 			},
 			CreatedAt: &now,
 			UpdatedAt: &now,
@@ -243,9 +243,9 @@ func (r *repository) InitTestData() {
 			},
 			Tags: []string{"двигатель", "метан", "полнопоточный"},
 			Metadata: map[string]interface{}{
-				"тяга":         2300000.0,
+				"тяга":             2300000.0,
 				"удельный_импульс": 330.0,
-				"топливо":      "метан+кислород",
+				"топливо":          "метан+кислород",
 			},
 			CreatedAt: &now,
 			UpdatedAt: &now,
@@ -270,7 +270,7 @@ func (r *repository) InitTestData() {
 			},
 			Tags: []string{"крыло", "управление", "посадка"},
 			Metadata: map[string]interface{}{
-				"материал":    "титан",
+				"материал":     "титан",
 				"многоразовый": true,
 			},
 			CreatedAt: &now,

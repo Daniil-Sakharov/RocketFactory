@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+
 	"github.com/Daniil-Sakharov/RocketFactory/inventory/internal/model"
 )
 

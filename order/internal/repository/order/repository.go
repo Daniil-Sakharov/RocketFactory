@@ -1,9 +1,10 @@
 package order
 
 import (
+	"sync"
+
 	def "github.com/Daniil-Sakharov/RocketFactory/order/internal/repository"
 	repoModel "github.com/Daniil-Sakharov/RocketFactory/order/internal/repository/model"
-	"sync"
 )
 
 var _ def.OrderRepository = (*repository)(nil)

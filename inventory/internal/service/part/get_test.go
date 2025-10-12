@@ -68,9 +68,7 @@ func (s *ServiceSuite) TestGetPartSuccess() {
 }
 
 func (s *ServiceSuite) TestGetPartNotFound() {
-	var (
-		partUUID = gofakeit.UUID()
-	)
+	partUUID := gofakeit.UUID()
 
 	s.partRepository.On("GetPart", s.ctx, partUUID).Return(nil, model.ErrPartNotFound)
 
