@@ -23,6 +23,18 @@ post:
         application/json:
           schema:
             $ref: '../components/errors/validation_error.yaml'
+    '404':
+      description: Детали не найдены
+      content:
+        application/json:
+          schema:
+            $ref: '../components/errors/not_found_error.yaml'
+    '409':
+      description: Конфликт - заказ уже существует
+      content:
+        application/json:
+          schema:
+            $ref: '../components/errors/conflict_error.yaml'
     '500':
       description: Внутренняя ошибка сервера
       content:

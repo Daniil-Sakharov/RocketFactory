@@ -1,0 +1,62 @@
+package order
+
+import (
+	"context"
+	"errors"
+	"fmt"
+	"github.com/Daniil-Sakharov/RocketFactory/order/internal/model/vo"
+
+	"github.com/google/uuid"
+
+	"github.com/Daniil-Sakharov/RocketFactory/order/internal/model"
+	"github.com/Daniil-Sakharov/RocketFactory/order/internal/model/dto"
+	"github.com/Daniil-Sakharov/RocketFactory/order/internal/model/entity"
+)
+
+func (s *service) Create(ctx context.Context, req *dto.CreateOrderRequest) (*entity.Order, error) {
+	if req.UserUUID == "" {
+		return nil, model.ErrEmptyUserUUID
+	}
+	if len(req.PartUUIDs) == 0 {
+		return nil, model.ErrEmptyPartUUIDs
+	}
+
+	parts, err := s.inventoryClient.ListParts(ctx, &entity.PartsFilter{
+		Uuids: req.PartUUIDs,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to get parts: %w", err)
+	}
+
+	if len(parts) == 0 {
+		return nil, model.ErrPartsNotFound
+	}
+
+	totalPrice := calculateTotalPrice(parts)
+
+	newOrder := &entity.Order{
+		OrderUUID:       uuid.NewString(),
+		UserUUID:        req.UserUUID,
+		PartUUIDs:       req.PartUUIDs,
+		TotalPrice:      totalPrice,
+		TransactionUUID: "",
+		PaymentMethod:   "",
+		Status:          vo.OrderStatusPENDINGPAYMENT,
+	}
+	err = s.orderRepository.Create(ctx, newOrder)
+	if err != nil {
+		if errors.Is(err, model.ErrOrderAlreadyExist) {
+			return nil, err
+		}
+		return nil, model.ErrUnknownError
+	}
+	return newOrder, nil
+}
+
+func calculateTotalPrice(parts []*entity.Part) float64 {
+	var total float64
+	for _, part := range parts {
+		total += part.Price
+	}
+	return total
+}
