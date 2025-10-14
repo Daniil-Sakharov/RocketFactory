@@ -8,12 +8,12 @@ import (
 	"github.com/google/uuid"
 
 	"github.com/Daniil-Sakharov/RocketFactory/order/internal/model"
+	"github.com/Daniil-Sakharov/RocketFactory/order/internal/model/domain"
 	"github.com/Daniil-Sakharov/RocketFactory/order/internal/model/dto"
-	"github.com/Daniil-Sakharov/RocketFactory/order/internal/model/entity"
 	"github.com/Daniil-Sakharov/RocketFactory/order/internal/model/vo"
 )
 
-func (s *service) Create(ctx context.Context, req *dto.CreateOrderRequest) (*entity.Order, error) {
+func (s *service) Create(ctx context.Context, req *dto.CreateOrderRequest) (*domain.Order, error) {
 	if req.UserUUID == "" {
 		return nil, model.ErrEmptyUserUUID
 	}
@@ -21,7 +21,7 @@ func (s *service) Create(ctx context.Context, req *dto.CreateOrderRequest) (*ent
 		return nil, model.ErrEmptyPartUUIDs
 	}
 
-	parts, err := s.inventoryClient.ListParts(ctx, &entity.PartsFilter{
+	parts, err := s.inventoryClient.ListParts(ctx, &domain.PartsFilter{
 		Uuids: req.PartUUIDs,
 	})
 	if err != nil {
@@ -34,13 +34,13 @@ func (s *service) Create(ctx context.Context, req *dto.CreateOrderRequest) (*ent
 
 	totalPrice := calculateTotalPrice(parts)
 
-	newOrder := &entity.Order{
+	newOrder := &domain.Order{
 		OrderUUID:       uuid.NewString(),
 		UserUUID:        req.UserUUID,
 		PartUUIDs:       req.PartUUIDs,
 		TotalPrice:      totalPrice,
 		TransactionUUID: "",
-		PaymentMethod:   "",
+		PaymentMethod:   vo.PaymentMethodUNKNOWN,
 		Status:          vo.OrderStatusPENDINGPAYMENT,
 	}
 	err = s.orderRepository.Create(ctx, newOrder)
@@ -48,12 +48,12 @@ func (s *service) Create(ctx context.Context, req *dto.CreateOrderRequest) (*ent
 		if errors.Is(err, model.ErrOrderAlreadyExist) {
 			return nil, err
 		}
-		return nil, model.ErrUnknownError
+		return nil, fmt.Errorf("failed to create order: %w", err)
 	}
 	return newOrder, nil
 }
 
-func calculateTotalPrice(parts []*entity.Part) float64 {
+func calculateTotalPrice(parts []*domain.Part) float64 {
 	var total float64
 	for _, part := range parts {
 		total += part.Price

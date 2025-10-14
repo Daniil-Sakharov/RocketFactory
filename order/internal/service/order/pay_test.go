@@ -7,8 +7,8 @@ import (
 	"github.com/stretchr/testify/mock"
 
 	"github.com/Daniil-Sakharov/RocketFactory/order/internal/model"
+	"github.com/Daniil-Sakharov/RocketFactory/order/internal/model/domain"
 	"github.com/Daniil-Sakharov/RocketFactory/order/internal/model/dto"
-	"github.com/Daniil-Sakharov/RocketFactory/order/internal/model/entity"
 	"github.com/Daniil-Sakharov/RocketFactory/order/internal/model/vo"
 )
 
@@ -38,7 +38,7 @@ func (s *ServiceSuite) TestPayOrderSuccess() {
 			TransactionUUID: transactionUUID,
 		}
 
-		orderFromDB = &entity.Order{
+		orderFromDB = &domain.Order{
 			OrderUUID:       orderUUID,
 			UserUUID:        userUUID,
 			PartUUIDs:       partsUUIDs,
@@ -48,7 +48,7 @@ func (s *ServiceSuite) TestPayOrderSuccess() {
 			Status:          vo.OrderStatusPENDINGPAYMENT,
 		}
 
-		expectedUpdatedOrder = &entity.Order{
+		expectedUpdatedOrder = &domain.Order{
 			OrderUUID:       orderUUID,
 			UserUUID:        userUUID,
 			PartUUIDs:       partsUUIDs,
@@ -63,7 +63,7 @@ func (s *ServiceSuite) TestPayOrderSuccess() {
 
 	s.paymentClient.On("PayOrder", s.ctx, payOrderClientRequest).Return(payOrderClientResponse, nil)
 
-	s.orderRepository.On("Update", s.ctx, mock.MatchedBy(func(order *entity.Order) bool {
+	s.orderRepository.On("Update", s.ctx, mock.MatchedBy(func(order *domain.Order) bool {
 		return order.OrderUUID == orderUUID &&
 			order.TransactionUUID == transactionUUID &&
 			order.PaymentMethod == paymentMethod &&
@@ -120,7 +120,7 @@ func (s *ServiceSuite) TestPayOrderPaymentClientError() {
 			PaymentMethod: paymentMethod,
 		}
 
-		orderFromDB = &entity.Order{
+		orderFromDB = &domain.Order{
 			OrderUUID:       orderUUID,
 			UserUUID:        userUUID,
 			PartUUIDs:       partsUUIDs,

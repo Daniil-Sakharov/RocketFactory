@@ -1,0 +1,12 @@
+services:
+  placeholder:
+    image: alpine
+    command:
+      ["sh", "-c", "echo 'Это плейсхолдер сервис' && sleep infinity"]
+    networks:
+      - microservices-net
+networks:
+  microservices-net:
+    name: microservices-net
+    driver: bridge
+    external: false

@@ -4,8 +4,8 @@ import (
 	"github.com/brianvoe/gofakeit/v7"
 
 	"github.com/Daniil-Sakharov/RocketFactory/order/internal/model"
+	"github.com/Daniil-Sakharov/RocketFactory/order/internal/model/domain"
 	"github.com/Daniil-Sakharov/RocketFactory/order/internal/model/dto"
-	"github.com/Daniil-Sakharov/RocketFactory/order/internal/model/entity"
 	"github.com/Daniil-Sakharov/RocketFactory/order/internal/model/vo"
 )
 
@@ -21,7 +21,7 @@ func (s *ServiceSuite) TestGetOrderSuccess() {
 			OrderUUID: orderUUID,
 		}
 
-		expectedOrder = &entity.Order{
+		expectedOrder = &domain.Order{
 			OrderUUID:       orderUUID,
 			UserUUID:        userUUID,
 			PartUUIDs:       []string{partUUID1, partUUID2},

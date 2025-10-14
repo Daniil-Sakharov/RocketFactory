@@ -3,8 +3,8 @@ package converter
 import (
 	"github.com/google/uuid"
 
+	"github.com/Daniil-Sakharov/RocketFactory/order/internal/model/domain"
 	"github.com/Daniil-Sakharov/RocketFactory/order/internal/model/dto"
-	"github.com/Daniil-Sakharov/RocketFactory/order/internal/model/entity"
 	"github.com/Daniil-Sakharov/RocketFactory/order/internal/model/vo"
 	"github.com/Daniil-Sakharov/RocketFactory/order/pkg/utils"
 	orderV1 "github.com/Daniil-Sakharov/RocketFactory/shared/pkg/openapi/order/v1"
@@ -17,7 +17,7 @@ func CreateOrderRequestToServiceModel(req orderV1.CreateOrderRequest) *dto.Creat
 	}
 }
 
-func CreateOrderResponseFromEntity(order *entity.Order) *orderV1.CreateOrderResponse {
+func CreateOrderResponseFromEntity(order *domain.Order) *orderV1.CreateOrderResponse {
 	orderUUID := uuid.MustParse(order.OrderUUID)
 
 	return &orderV1.CreateOrderResponse{
@@ -26,7 +26,7 @@ func CreateOrderResponseFromEntity(order *entity.Order) *orderV1.CreateOrderResp
 	}
 }
 
-func GetOrderResponseFromEntity(order *entity.Order) *orderV1.GetOrderResponse {
+func GetOrderResponseFromEntity(order *domain.Order) *orderV1.GetOrderResponse {
 	orderUUID := uuid.MustParse(order.OrderUUID)
 	userUUID := uuid.MustParse(order.UserUUID)
 
@@ -79,7 +79,7 @@ func CancelOrderRequestToServiceModel(orderUUID string) *dto.CancelOrderRequest 
 	}
 }
 
-func PayOrderResponseFromEntity(order *entity.Order) *orderV1.PayOrderResponse {
+func PayOrderResponseFromEntity(order *domain.Order) *orderV1.PayOrderResponse {
 	transactionUUID := uuid.MustParse(order.TransactionUUID)
 
 	return &orderV1.PayOrderResponse{

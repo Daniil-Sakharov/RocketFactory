@@ -7,7 +7,7 @@ package mocks
 import (
 	context "context"
 
-	entity "github.com/Daniil-Sakharov/RocketFactory/order/internal/model/entity"
+	domain "github.com/Daniil-Sakharov/RocketFactory/order/internal/model/domain"
 
 	mock "github.com/stretchr/testify/mock"
 )
@@ -26,27 +26,27 @@ func (_m *InventoryClient) EXPECT() *InventoryClient_Expecter {
 }
 
 // ListParts provides a mock function with given fields: ctx, filter
-func (_m *InventoryClient) ListParts(ctx context.Context, filter *entity.PartsFilter) ([]*entity.Part, error) {
+func (_m *InventoryClient) ListParts(ctx context.Context, filter *domain.PartsFilter) ([]*domain.Part, error) {
 	ret := _m.Called(ctx, filter)
 
 	if len(ret) == 0 {
 		panic("no return value specified for ListParts")
 	}
 
-	var r0 []*entity.Part
+	var r0 []*domain.Part
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, *entity.PartsFilter) ([]*entity.Part, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, *domain.PartsFilter) ([]*domain.Part, error)); ok {
 		return rf(ctx, filter)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, *entity.PartsFilter) []*entity.Part); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, *domain.PartsFilter) []*domain.Part); ok {
 		r0 = rf(ctx, filter)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]*entity.Part)
+			r0 = ret.Get(0).([]*domain.Part)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, *entity.PartsFilter) error); ok {
+	if rf, ok := ret.Get(1).(func(context.Context, *domain.PartsFilter) error); ok {
 		r1 = rf(ctx, filter)
 	} else {
 		r1 = ret.Error(1)
@@ -62,24 +62,24 @@ type InventoryClient_ListParts_Call struct {
 
 // ListParts is a helper method to define mock.On call
 //   - ctx context.Context
-//   - filter *entity.PartsFilter
+//   - filter *domain.PartsFilter
 func (_e *InventoryClient_Expecter) ListParts(ctx interface{}, filter interface{}) *InventoryClient_ListParts_Call {
 	return &InventoryClient_ListParts_Call{Call: _e.mock.On("ListParts", ctx, filter)}
 }
 
-func (_c *InventoryClient_ListParts_Call) Run(run func(ctx context.Context, filter *entity.PartsFilter)) *InventoryClient_ListParts_Call {
+func (_c *InventoryClient_ListParts_Call) Run(run func(ctx context.Context, filter *domain.PartsFilter)) *InventoryClient_ListParts_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(*entity.PartsFilter))
+		run(args[0].(context.Context), args[1].(*domain.PartsFilter))
 	})
 	return _c
 }
 
-func (_c *InventoryClient_ListParts_Call) Return(_a0 []*entity.Part, _a1 error) *InventoryClient_ListParts_Call {
+func (_c *InventoryClient_ListParts_Call) Return(_a0 []*domain.Part, _a1 error) *InventoryClient_ListParts_Call {
 	_c.Call.Return(_a0, _a1)
 	return _c
 }
 
-func (_c *InventoryClient_ListParts_Call) RunAndReturn(run func(context.Context, *entity.PartsFilter) ([]*entity.Part, error)) *InventoryClient_ListParts_Call {
+func (_c *InventoryClient_ListParts_Call) RunAndReturn(run func(context.Context, *domain.PartsFilter) ([]*domain.Part, error)) *InventoryClient_ListParts_Call {
 	_c.Call.Return(run)
 	return _c
 }

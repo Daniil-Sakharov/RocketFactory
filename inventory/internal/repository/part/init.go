@@ -1,15 +1,13 @@
 package part
 
 import (
+	"context"
 	"time"
 
 	repoModel "github.com/Daniil-Sakharov/RocketFactory/inventory/internal/repository/model"
 )
 
 func (r *repository) InitTestData() {
-	r.mu.Lock()
-	defer r.mu.Unlock()
-
 	now := time.Now()
 
 	// Тестовые данные
@@ -20,7 +18,7 @@ func (r *repository) InitTestData() {
 			Description:   "Мощный жидкостный ракетный двигатель",
 			Price:         15000000.0,
 			StockQuantity: 3,
-			Category:      repoModel.CATEGORY_ENGINE,
+			Category:      "ENGINE",
 			Dimensions: &repoModel.Dimensions{
 				Length: 350.0,
 				Width:  240.0,
@@ -46,7 +44,7 @@ func (r *repository) InitTestData() {
 			Description:   "Аэродинамическое крыло для атмосферного полета",
 			Price:         2500000.0,
 			StockQuantity: 8,
-			Category:      repoModel.CATEGORY_WING,
+			Category:      "WING",
 			Dimensions: &repoModel.Dimensions{
 				Length: 1200.0,
 				Width:  600.0,
@@ -72,7 +70,7 @@ func (r *repository) InitTestData() {
 			Description:   "Жидкий водород для ракетных двигателей",
 			Price:         50000.0,
 			StockQuantity: 150,
-			Category:      repoModel.CATEGORY_FUEL,
+			Category:      "FUEL",
 			Dimensions: &repoModel.Dimensions{
 				Length: 100.0,
 				Width:  100.0,
@@ -98,7 +96,7 @@ func (r *repository) InitTestData() {
 			Description:   "Прочный иллюминатор для наблюдения в космосе",
 			Price:         750000.0,
 			StockQuantity: 12,
-			Category:      repoModel.CATEGORY_PORTHOLE,
+			Category:      "PORTHOLE",
 			Dimensions: &repoModel.Dimensions{
 				Length: 60.0,
 				Width:  60.0,
@@ -124,7 +122,7 @@ func (r *repository) InitTestData() {
 			Description:   "Компактный двигатель для первой ступени",
 			Price:         1200000.0,
 			StockQuantity: 25,
-			Category:      repoModel.CATEGORY_ENGINE,
+			Category:      "ENGINE",
 			Dimensions: &repoModel.Dimensions{
 				Length: 300.0,
 				Width:  100.0,
@@ -150,7 +148,7 @@ func (r *repository) InitTestData() {
 			Description:   "Большое крыло для тяжелых ракет",
 			Price:         4200000.0,
 			StockQuantity: 4,
-			Category:      repoModel.CATEGORY_WING,
+			Category:      "WING",
 			Dimensions: &repoModel.Dimensions{
 				Length: 1800.0,
 				Width:  900.0,
@@ -176,7 +174,7 @@ func (r *repository) InitTestData() {
 			Description:   "Бак для жидкого кислорода большой емкости",
 			Price:         890000.0,
 			StockQuantity: 18,
-			Category:      repoModel.CATEGORY_FUEL,
+			Category:      "FUEL",
 			Dimensions: &repoModel.Dimensions{
 				Length: 500.0,
 				Width:  200.0,
@@ -203,7 +201,7 @@ func (r *repository) InitTestData() {
 			Description:   "Панорамный иллюминатор для туристических полетов",
 			Price:         1250000.0,
 			StockQuantity: 6,
-			Category:      repoModel.CATEGORY_PORTHOLE,
+			Category:      "PORTHOLE",
 			Dimensions: &repoModel.Dimensions{
 				Length: 150.0,
 				Width:  100.0,
@@ -229,7 +227,7 @@ func (r *repository) InitTestData() {
 			Description:   "Полнопоточный двигатель на метане",
 			Price:         2800000.0,
 			StockQuantity: 15,
-			Category:      repoModel.CATEGORY_ENGINE,
+			Category:      "ENGINE",
 			Dimensions: &repoModel.Dimensions{
 				Length: 340.0,
 				Width:  130.0,
@@ -256,7 +254,7 @@ func (r *repository) InitTestData() {
 			Description:   "Решетчатые рули для управления посадкой",
 			Price:         650000.0,
 			StockQuantity: 20,
-			Category:      repoModel.CATEGORY_WING,
+			Category:      "WING",
 			Dimensions: &repoModel.Dimensions{
 				Length: 150.0,
 				Width:  120.0,
@@ -278,8 +276,10 @@ func (r *repository) InitTestData() {
 		},
 	}
 
-	// Загружаем данные в мапу через цикл
 	for _, part := range testParts {
-		r.data[part.Uuid] = part
+		_, err := r.collection.InsertOne(context.Background(), part)
+		if err != nil {
+			return
+		}
 	}
 }
