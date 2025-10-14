@@ -168,7 +168,7 @@ func (s *ServiceSuite) TestListPartsRepositoryError() {
 			Tags:       []string{"rocket"},
 		}
 
-		repositoryError = model.ErrPartNotFound
+		repositoryError = model.ErrPartsNotFound
 	)
 
 	s.partRepository.On("ListParts", s.ctx, filter).Return(nil, repositoryError)

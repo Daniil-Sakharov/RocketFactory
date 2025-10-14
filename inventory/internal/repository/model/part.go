@@ -1,78 +1,68 @@
 package model
 
-import "time"
+import (
+	"time"
 
-type Category int32
-
-const (
-	// Неизвестная категория
-	CATEGORY_UNSPECIFIED Category = 0
-	// Двигатель
-	CATEGORY_ENGINE Category = 1
-	// Топливо
-	CATEGORY_FUEL Category = 2
-	// Иллюминатор
-	CATEGORY_PORTHOLE Category = 3
-	// Крыло
-	CATEGORY_WING Category = 4
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type PartsFilter struct {
 	// Список UUID'ов. Пусто — не фильтруем по UUID
-	Uuids []string
+	Uuids []string `bson:"uuids,omitempty"`
 	// Список имён. Пусто — не фильтруем по имени
-	Names []string
+	Names []string `bson:"names,omitempty"`
 	// Список категорий. Пусто — не фильтруем по категории
-	Categories []Category
+	Categories []string `bson:"categories,omitempty"`
 	// Список стран производителей. Пусто — не фильтруем по стране
-	ManufacturerCountries []string
+	ManufacturerCountries []string `bson:"manufacturer_countries,omitempty"`
 	// Список тегов. Пусто — не фильтруем по тегам
-	Tags []string
+	Tags []string `bson:"tags,omitempty"`
 }
 
 type Dimensions struct {
 	// Длина в сантиметрах
-	Length float64
+	Length float64 `bson:"length"`
 	// Ширина в сантиметрах
-	Width float64
+	Width float64 `bson:"width"`
 	// Высота в сантиметрах
-	Height float64
+	Height float64 `bson:"height"`
 	// Вес в килограммах
-	Weight float64
+	Weight float64 `bson:"weight"`
 }
 
 type Manufacturer struct {
 	// Название производителя
-	Name string
+	Name string `bson:"name"`
 	// Страна производства
-	Country string
+	Country string `bson:"country"`
 	// Сайт производителя
-	Website string
+	Website string `bson:"website"`
 }
 
 type Part struct {
+	ID primitive.ObjectID `bson:"_id,omitempty"`
 	// Уникальный идентификатор детали
-	Uuid string
+	Uuid string `bson:"uuid"`
 	// Название детали
-	Name string
+	Name string `bson:"name"`
 	// Описание детали
-	Description string
+	Description string `bson:"description"`
 	// Цена за единицу
-	Price float64
+	Price float64 `bson:"price"`
 	// Количество на складе
-	StockQuantity int64
+	StockQuantity int64 `bson:"stock_quantity"`
 	// Категория детали
-	Category Category
+	Category string `bson:"category"`
 	// Размеры детали
-	Dimensions *Dimensions
+	Dimensions *Dimensions `bson:"dimensions"`
 	// Информация о производителе
-	Manufacturer *Manufacturer
+	Manufacturer *Manufacturer `bson:"manufacturer"`
 	// Теги для быстрого поиска
-	Tags []string
+	Tags []string `bson:"tags"`
 	// Гибкие метаданные
-	Metadata map[string]interface{}
+	Metadata map[string]interface{} `bson:"metadata"`
 	// Дата создания записи
-	CreatedAt *time.Time
+	CreatedAt *time.Time `bson:"created_at"`
 	// Дата последнего обновления
-	UpdatedAt *time.Time
+	UpdatedAt *time.Time `bson:"updated_at"`
 }

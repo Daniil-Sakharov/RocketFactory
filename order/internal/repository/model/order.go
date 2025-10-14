@@ -1,15 +1,23 @@
 package model
 
-import "github.com/google/uuid"
+import (
+	"database/sql"
+	"time"
+
+	"github.com/lib/pq"
+	"github.com/shopspring/decimal"
+)
 
 type Order struct {
-	OrderUUID       string
-	UserUUID        uuid.UUID
-	PartUUIDs       []uuid.UUID
-	TotalPrice      float64
-	TransactionUUID string
-	PaymentMethod   PaymentMethod
-	Status          OrderStatus
+	OrderUUID       string          `db:"order_uuid"`
+	UserUUID        string          `db:"user_uuid"`
+	PartUUIDs       pq.StringArray  `db:"part_uuids"`
+	TotalPrice      decimal.Decimal `db:"total_price"`
+	TransactionUUID sql.NullString  `db:"transaction_uuid"`
+	PaymentMethod   string          `db:"payment_method"`
+	Status          string          `db:"order_status"`
+	CreatedAt       time.Time       `db:"created_at"`
+	UpdatedAt       time.Time       `db:"updated_at"`
 }
 
 type OrderStatus string

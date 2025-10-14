@@ -1,21 +1,19 @@
 package order
 
 import (
-	"sync"
+	"github.com/jmoiron/sqlx"
 
 	def "github.com/Daniil-Sakharov/RocketFactory/order/internal/repository"
-	repoModel "github.com/Daniil-Sakharov/RocketFactory/order/internal/repository/model"
 )
 
 var _ def.OrderRepository = (*repository)(nil)
 
 type repository struct {
-	mu   sync.RWMutex
-	repo map[string]*repoModel.Order
+	db *sqlx.DB
 }
 
-func NewRepository() *repository {
+func NewRepository(db *sqlx.DB) *repository {
 	return &repository{
-		repo: make(map[string]*repoModel.Order),
+		db: db,
 	}
 }

@@ -3,14 +3,15 @@ package order
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"github.com/Daniil-Sakharov/RocketFactory/order/internal/model"
+	"github.com/Daniil-Sakharov/RocketFactory/order/internal/model/domain"
 	"github.com/Daniil-Sakharov/RocketFactory/order/internal/model/dto"
-	"github.com/Daniil-Sakharov/RocketFactory/order/internal/model/entity"
 	"github.com/Daniil-Sakharov/RocketFactory/order/internal/model/vo"
 )
 
-func (s *service) Pay(ctx context.Context, req *dto.PayOrderRequest) (*entity.Order, error) {
+func (s *service) Pay(ctx context.Context, req *dto.PayOrderRequest) (*domain.Order, error) {
 	order, err := s.orderRepository.Get(ctx, req.OrderUUID)
 	if err != nil {
 		if errors.Is(err, model.ErrOrderNotFound) {
@@ -24,10 +25,10 @@ func (s *service) Pay(ctx context.Context, req *dto.PayOrderRequest) (*entity.Or
 		PaymentMethod: req.PaymentMethod,
 	})
 	if err != nil {
-		return nil, errors.New("failed to access pay")
+		return nil, fmt.Errorf("failed to access pay")
 	}
 
-	newOrder := &entity.Order{
+	newOrder := &domain.Order{
 		OrderUUID:       order.OrderUUID,
 		UserUUID:        order.UserUUID,
 		PartUUIDs:       order.PartUUIDs,
@@ -42,7 +43,13 @@ func (s *service) Pay(ctx context.Context, req *dto.PayOrderRequest) (*entity.Or
 		if errors.Is(err, model.ErrOrderNotFound) {
 			return nil, err
 		}
-		return nil, model.ErrUnknownError
+		if errors.Is(err, model.ErrOrderAlreadyPaid) {
+			return nil, err
+		}
+		if errors.Is(err, model.ErrOrderAlreadyCancelled) {
+			return nil, err
+		}
+		return nil, fmt.Errorf("failed to update order: %w", err)
 	}
 
 	return newOrder, nil
