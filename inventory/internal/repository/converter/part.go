@@ -5,6 +5,36 @@ import (
 	repoModel "github.com/Daniil-Sakharov/RocketFactory/inventory/internal/repository/model"
 )
 
+func CategoryToRepoModel(cat model.Category) string {
+	switch cat {
+	case model.CATEGORY_ENGINE:
+		return "ENGINE"
+	case model.CATEGORY_FUEL:
+		return "FUEL"
+	case model.CATEGORY_PORTHOLE:
+		return "PORTHOLE"
+	case model.CATEGORY_WING:
+		return "WING"
+	default:
+		return "UNSPECIFIED"
+	}
+}
+
+func CategoryToModel(s string) model.Category {
+	switch s {
+	case "ENGINE":
+		return model.CATEGORY_ENGINE
+	case "FUEL":
+		return model.CATEGORY_FUEL
+	case "PORTHOLE":
+		return model.CATEGORY_PORTHOLE
+	case "WING":
+		return model.CATEGORY_WING
+	default:
+		return model.CATEGORY_UNSPECIFIED
+	}
+}
+
 func PartsToModel(repoParts []*repoModel.Part) []*model.Part {
 	if repoParts == nil {
 		return nil
@@ -31,26 +61,26 @@ func FilterToRepoModel(filter *model.PartsFilter) *repoModel.PartsFilter {
 	}
 }
 
-func CategoriesToModel(categories []repoModel.Category) []model.Category {
+func CategoriesToModel(categories []string) []model.Category {
 	if categories == nil {
 		return nil
 	}
 
 	result := make([]model.Category, len(categories))
 	for i, cat := range categories {
-		result[i] = model.Category(cat)
+		result[i] = CategoryToModel(cat)
 	}
 	return result
 }
 
-func CategoriesToRepo(categories []model.Category) []repoModel.Category {
+func CategoriesToRepo(categories []model.Category) []string {
 	if categories == nil {
 		return nil
 	}
 
-	result := make([]repoModel.Category, len(categories))
+	result := make([]string, len(categories))
 	for i, cat := range categories {
-		result[i] = repoModel.Category(cat)
+		result[i] = CategoryToRepoModel(cat)
 	}
 	return result
 }
@@ -88,10 +118,6 @@ func ManufacturerToModel(manufacturer *repoModel.Manufacturer) *model.Manufactur
 	}
 }
 
-func CategoryToModel(category repoModel.Category) model.Category {
-	return model.Category(category)
-}
-
 func DimensionsToModel(dimensions *repoModel.Dimensions) *model.Dimensions {
 	if dimensions == nil {
 		return nil
@@ -116,7 +142,7 @@ func PartToRepoModel(part *model.Part) *repoModel.Part {
 		Description:   part.Description,
 		Price:         part.Price,
 		StockQuantity: part.StockQuantity,
-		Category:      CategoryToRepo(part.Category),
+		Category:      CategoryToRepoModel(part.Category),
 		Dimensions:    DimensionsToRepo(part.Dimensions),
 		Manufacturer:  ManufacturerToRepo(part.Manufacturer),
 		Tags:          part.Tags,
@@ -136,10 +162,6 @@ func ManufacturerToRepo(manufacturer *model.Manufacturer) *repoModel.Manufacture
 		Country: manufacturer.Country,
 		Website: manufacturer.Website,
 	}
-}
-
-func CategoryToRepo(category model.Category) repoModel.Category {
-	return repoModel.Category(category)
 }
 
 func DimensionsToRepo(dimensions *model.Dimensions) *repoModel.Dimensions {

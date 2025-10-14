@@ -7,8 +7,8 @@ package mocks
 import (
 	context "context"
 
+	domain "github.com/Daniil-Sakharov/RocketFactory/order/internal/model/domain"
 	dto "github.com/Daniil-Sakharov/RocketFactory/order/internal/model/dto"
-	entity "github.com/Daniil-Sakharov/RocketFactory/order/internal/model/entity"
 
 	mock "github.com/stretchr/testify/mock"
 )
@@ -74,23 +74,23 @@ func (_c *OrderService_Cancel_Call) RunAndReturn(run func(context.Context, *dto.
 }
 
 // Create provides a mock function with given fields: ctx, req
-func (_m *OrderService) Create(ctx context.Context, req *dto.CreateOrderRequest) (*entity.Order, error) {
+func (_m *OrderService) Create(ctx context.Context, req *dto.CreateOrderRequest) (*domain.Order, error) {
 	ret := _m.Called(ctx, req)
 
 	if len(ret) == 0 {
 		panic("no return value specified for Create")
 	}
 
-	var r0 *entity.Order
+	var r0 *domain.Order
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, *dto.CreateOrderRequest) (*entity.Order, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, *dto.CreateOrderRequest) (*domain.Order, error)); ok {
 		return rf(ctx, req)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, *dto.CreateOrderRequest) *entity.Order); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, *dto.CreateOrderRequest) *domain.Order); ok {
 		r0 = rf(ctx, req)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*entity.Order)
+			r0 = ret.Get(0).(*domain.Order)
 		}
 	}
 
@@ -122,34 +122,34 @@ func (_c *OrderService_Create_Call) Run(run func(ctx context.Context, req *dto.C
 	return _c
 }
 
-func (_c *OrderService_Create_Call) Return(_a0 *entity.Order, _a1 error) *OrderService_Create_Call {
+func (_c *OrderService_Create_Call) Return(_a0 *domain.Order, _a1 error) *OrderService_Create_Call {
 	_c.Call.Return(_a0, _a1)
 	return _c
 }
 
-func (_c *OrderService_Create_Call) RunAndReturn(run func(context.Context, *dto.CreateOrderRequest) (*entity.Order, error)) *OrderService_Create_Call {
+func (_c *OrderService_Create_Call) RunAndReturn(run func(context.Context, *dto.CreateOrderRequest) (*domain.Order, error)) *OrderService_Create_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // Get provides a mock function with given fields: ctx, req
-func (_m *OrderService) Get(ctx context.Context, req *dto.GetOrderRequest) (*entity.Order, error) {
+func (_m *OrderService) Get(ctx context.Context, req *dto.GetOrderRequest) (*domain.Order, error) {
 	ret := _m.Called(ctx, req)
 
 	if len(ret) == 0 {
 		panic("no return value specified for Get")
 	}
 
-	var r0 *entity.Order
+	var r0 *domain.Order
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, *dto.GetOrderRequest) (*entity.Order, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, *dto.GetOrderRequest) (*domain.Order, error)); ok {
 		return rf(ctx, req)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, *dto.GetOrderRequest) *entity.Order); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, *dto.GetOrderRequest) *domain.Order); ok {
 		r0 = rf(ctx, req)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*entity.Order)
+			r0 = ret.Get(0).(*domain.Order)
 		}
 	}
 
@@ -181,34 +181,34 @@ func (_c *OrderService_Get_Call) Run(run func(ctx context.Context, req *dto.GetO
 	return _c
 }
 
-func (_c *OrderService_Get_Call) Return(_a0 *entity.Order, _a1 error) *OrderService_Get_Call {
+func (_c *OrderService_Get_Call) Return(_a0 *domain.Order, _a1 error) *OrderService_Get_Call {
 	_c.Call.Return(_a0, _a1)
 	return _c
 }
 
-func (_c *OrderService_Get_Call) RunAndReturn(run func(context.Context, *dto.GetOrderRequest) (*entity.Order, error)) *OrderService_Get_Call {
+func (_c *OrderService_Get_Call) RunAndReturn(run func(context.Context, *dto.GetOrderRequest) (*domain.Order, error)) *OrderService_Get_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // Pay provides a mock function with given fields: ctx, req
-func (_m *OrderService) Pay(ctx context.Context, req *dto.PayOrderRequest) (*entity.Order, error) {
+func (_m *OrderService) Pay(ctx context.Context, req *dto.PayOrderRequest) (*domain.Order, error) {
 	ret := _m.Called(ctx, req)
 
 	if len(ret) == 0 {
 		panic("no return value specified for Pay")
 	}
 
-	var r0 *entity.Order
+	var r0 *domain.Order
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, *dto.PayOrderRequest) (*entity.Order, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, *dto.PayOrderRequest) (*domain.Order, error)); ok {
 		return rf(ctx, req)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, *dto.PayOrderRequest) *entity.Order); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, *dto.PayOrderRequest) *domain.Order); ok {
 		r0 = rf(ctx, req)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*entity.Order)
+			r0 = ret.Get(0).(*domain.Order)
 		}
 	}
 
@@ -240,12 +240,12 @@ func (_c *OrderService_Pay_Call) Run(run func(ctx context.Context, req *dto.PayO
 	return _c
 }
 
-func (_c *OrderService_Pay_Call) Return(_a0 *entity.Order, _a1 error) *OrderService_Pay_Call {
+func (_c *OrderService_Pay_Call) Return(_a0 *domain.Order, _a1 error) *OrderService_Pay_Call {
 	_c.Call.Return(_a0, _a1)
 	return _c
 }
 
-func (_c *OrderService_Pay_Call) RunAndReturn(run func(context.Context, *dto.PayOrderRequest) (*entity.Order, error)) *OrderService_Pay_Call {
+func (_c *OrderService_Pay_Call) RunAndReturn(run func(context.Context, *dto.PayOrderRequest) (*domain.Order, error)) *OrderService_Pay_Call {
 	_c.Call.Return(run)
 	return _c
 }

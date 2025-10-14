@@ -3,12 +3,12 @@ package converter
 import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 
-	"github.com/Daniil-Sakharov/RocketFactory/order/internal/model/entity"
+	"github.com/Daniil-Sakharov/RocketFactory/order/internal/model/domain"
 	inventoryv1 "github.com/Daniil-Sakharov/RocketFactory/shared/pkg/proto/inventory/v1"
 )
 
 // PartToProto конвертирует domain модель Part в protobuf модель
-func PartToProto(part *entity.Part) *inventoryv1.Part {
+func PartToProto(part *domain.Part) *inventoryv1.Part {
 	if part == nil {
 		return nil
 	}
@@ -38,7 +38,7 @@ func PartToProto(part *entity.Part) *inventoryv1.Part {
 }
 
 // PartsToProto конвертирует слайс domain моделей Part в слайс protobuf моделей
-func PartsToProto(parts []*entity.Part) []*inventoryv1.Part {
+func PartsToProto(parts []*domain.Part) []*inventoryv1.Part {
 	if parts == nil {
 		return nil
 	}
@@ -52,12 +52,12 @@ func PartsToProto(parts []*entity.Part) []*inventoryv1.Part {
 }
 
 // PartFromProto конвертирует Part domain модель в protobuf модель
-func PartsFromProto(parts []*inventoryv1.Part) []*entity.Part {
+func PartsFromProto(parts []*inventoryv1.Part) []*domain.Part {
 	if parts == nil {
 		return nil
 	}
 
-	protoParts := make([]*entity.Part, 0, len(parts))
+	protoParts := make([]*domain.Part, 0, len(parts))
 	for _, part := range parts {
 		protoParts = append(protoParts, PartFromProto(part))
 	}
@@ -66,12 +66,12 @@ func PartsFromProto(parts []*inventoryv1.Part) []*entity.Part {
 }
 
 // PartFromProto конвертирует protobuf модель Part в domain модель
-func PartFromProto(protoPart *inventoryv1.Part) *entity.Part {
+func PartFromProto(protoPart *inventoryv1.Part) *domain.Part {
 	if protoPart == nil {
 		return nil
 	}
 
-	part := &entity.Part{
+	part := &domain.Part{
 		Uuid:          protoPart.GetUuid(),
 		Name:          protoPart.GetName(),
 		Description:   protoPart.GetDescription(),
@@ -98,15 +98,15 @@ func PartFromProto(protoPart *inventoryv1.Part) *entity.Part {
 }
 
 // CategoryToProto конвертирует domain Category в protobuf Category
-func CategoryToProto(category entity.Category) inventoryv1.Category {
+func CategoryToProto(category domain.Category) inventoryv1.Category {
 	switch category {
-	case entity.CATEGORY_ENGINE:
+	case domain.CATEGORY_ENGINE:
 		return inventoryv1.Category_CATEGORY_ENGINE
-	case entity.CATEGORY_FUEL:
+	case domain.CATEGORY_FUEL:
 		return inventoryv1.Category_CATEGORY_FUEL
-	case entity.CATEGORY_PORTHOLE:
+	case domain.CATEGORY_PORTHOLE:
 		return inventoryv1.Category_CATEGORY_PORTHOLE
-	case entity.CATEGORY_WING:
+	case domain.CATEGORY_WING:
 		return inventoryv1.Category_CATEGORY_WING
 	default:
 		return inventoryv1.Category_CATEGORY_UNSPECIFIED
@@ -114,23 +114,23 @@ func CategoryToProto(category entity.Category) inventoryv1.Category {
 }
 
 // CategoryFromProto конвертирует protobuf Category в domain Category
-func CategoryFromProto(protoCategory inventoryv1.Category) entity.Category {
+func CategoryFromProto(protoCategory inventoryv1.Category) domain.Category {
 	switch protoCategory {
 	case inventoryv1.Category_CATEGORY_ENGINE:
-		return entity.CATEGORY_ENGINE
+		return domain.CATEGORY_ENGINE
 	case inventoryv1.Category_CATEGORY_FUEL:
-		return entity.CATEGORY_FUEL
+		return domain.CATEGORY_FUEL
 	case inventoryv1.Category_CATEGORY_PORTHOLE:
-		return entity.CATEGORY_PORTHOLE
+		return domain.CATEGORY_PORTHOLE
 	case inventoryv1.Category_CATEGORY_WING:
-		return entity.CATEGORY_WING
+		return domain.CATEGORY_WING
 	default:
-		return entity.CATEGORY_UNSPECIFIED
+		return domain.CATEGORY_UNSPECIFIED
 	}
 }
 
 // CategoriesToProto конвертирует слайс domain Categories в слайс protobuf Categories
-func CategoriesToProto(categories []entity.Category) []inventoryv1.Category {
+func CategoriesToProto(categories []domain.Category) []inventoryv1.Category {
 	if categories == nil {
 		return nil
 	}
@@ -144,12 +144,12 @@ func CategoriesToProto(categories []entity.Category) []inventoryv1.Category {
 }
 
 // CategoriesFromProto конвертирует слайс protobuf Categories в слайс domain Categories
-func CategoriesFromProto(protoCategories []inventoryv1.Category) []entity.Category {
+func CategoriesFromProto(protoCategories []inventoryv1.Category) []domain.Category {
 	if protoCategories == nil {
 		return nil
 	}
 
-	categories := make([]entity.Category, 0, len(protoCategories))
+	categories := make([]domain.Category, 0, len(protoCategories))
 	for _, protoCategory := range protoCategories {
 		categories = append(categories, CategoryFromProto(protoCategory))
 	}
@@ -158,7 +158,7 @@ func CategoriesFromProto(protoCategories []inventoryv1.Category) []entity.Catego
 }
 
 // DimensionsToProto конвертирует domain Dimensions в protobuf Dimensions
-func DimensionsToProto(dimensions *entity.Dimensions) *inventoryv1.Dimensions {
+func DimensionsToProto(dimensions *domain.Dimensions) *inventoryv1.Dimensions {
 	if dimensions == nil {
 		return nil
 	}
@@ -172,12 +172,12 @@ func DimensionsToProto(dimensions *entity.Dimensions) *inventoryv1.Dimensions {
 }
 
 // DimensionsFromProto конвертирует protobuf Dimensions в domain Dimensions
-func DimensionsFromProto(protoDimensions *inventoryv1.Dimensions) *entity.Dimensions {
+func DimensionsFromProto(protoDimensions *inventoryv1.Dimensions) *domain.Dimensions {
 	if protoDimensions == nil {
 		return nil
 	}
 
-	return &entity.Dimensions{
+	return &domain.Dimensions{
 		Length: protoDimensions.GetLength(),
 		Width:  protoDimensions.GetWidth(),
 		Height: protoDimensions.GetHeight(),
@@ -186,7 +186,7 @@ func DimensionsFromProto(protoDimensions *inventoryv1.Dimensions) *entity.Dimens
 }
 
 // ManufacturerToProto конвертирует domain Manufacturer в protobuf Manufacturer
-func ManufacturerToProto(manufacturer *entity.Manufacturer) *inventoryv1.Manufacturer {
+func ManufacturerToProto(manufacturer *domain.Manufacturer) *inventoryv1.Manufacturer {
 	if manufacturer == nil {
 		return nil
 	}
@@ -199,12 +199,12 @@ func ManufacturerToProto(manufacturer *entity.Manufacturer) *inventoryv1.Manufac
 }
 
 // ManufacturerFromProto конвертирует protobuf Manufacturer в domain Manufacturer
-func ManufacturerFromProto(protoManufacturer *inventoryv1.Manufacturer) *entity.Manufacturer {
+func ManufacturerFromProto(protoManufacturer *inventoryv1.Manufacturer) *domain.Manufacturer {
 	if protoManufacturer == nil {
 		return nil
 	}
 
-	return &entity.Manufacturer{
+	return &domain.Manufacturer{
 		Name:    protoManufacturer.GetName(),
 		Country: protoManufacturer.GetCountry(),
 		Website: protoManufacturer.GetWebsite(),
@@ -303,7 +303,7 @@ func ValueFromProto(protoValue *inventoryv1.Value) interface{} {
 }
 
 // FilterToProto конвертирует domain PartsFilter в protobuf PartsFilter
-func FilterToProto(filter *entity.PartsFilter) *inventoryv1.PartsFilter {
+func FilterToProto(filter *domain.PartsFilter) *inventoryv1.PartsFilter {
 	if filter == nil {
 		return nil
 	}
@@ -318,12 +318,12 @@ func FilterToProto(filter *entity.PartsFilter) *inventoryv1.PartsFilter {
 }
 
 // FilterFromProto конвертирует protobuf PartsFilter в domain PartsFilter
-func FilterFromProto(protoFilter *inventoryv1.PartsFilter) *entity.PartsFilter {
+func FilterFromProto(protoFilter *inventoryv1.PartsFilter) *domain.PartsFilter {
 	if protoFilter == nil {
 		return nil
 	}
 
-	return &entity.PartsFilter{
+	return &domain.PartsFilter{
 		Uuids:                 protoFilter.GetUuids(),
 		Names:                 protoFilter.GetNames(),
 		Categories:            CategoriesFromProto(protoFilter.GetCategories()),

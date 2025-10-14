@@ -5,8 +5,8 @@ import (
 	"github.com/stretchr/testify/mock"
 
 	"github.com/Daniil-Sakharov/RocketFactory/order/internal/model"
+	"github.com/Daniil-Sakharov/RocketFactory/order/internal/model/domain"
 	"github.com/Daniil-Sakharov/RocketFactory/order/internal/model/dto"
-	"github.com/Daniil-Sakharov/RocketFactory/order/internal/model/entity"
 	"github.com/Daniil-Sakharov/RocketFactory/order/internal/model/vo"
 )
 
@@ -21,7 +21,7 @@ func (s *ServiceSuite) TestCancelOrderSuccess() {
 
 		cancelOrderRequest = &dto.CancelOrderRequest{OrderUUID: orderUUID}
 
-		orderFromDB = &entity.Order{
+		orderFromDB = &domain.Order{
 			OrderUUID:       orderUUID,
 			UserUUID:        userUUID,
 			PartUUIDs:       partsUUIDs,
@@ -34,7 +34,7 @@ func (s *ServiceSuite) TestCancelOrderSuccess() {
 
 	s.orderRepository.On("Get", s.ctx, orderUUID).Return(orderFromDB, nil)
 
-	s.orderRepository.On("Update", s.ctx, mock.MatchedBy(func(order *entity.Order) bool {
+	s.orderRepository.On("Update", s.ctx, mock.MatchedBy(func(order *domain.Order) bool {
 		return order.OrderUUID == orderUUID &&
 			order.UserUUID == userUUID &&
 			order.TransactionUUID == "" &&
@@ -60,7 +60,7 @@ func (s *ServiceSuite) TestCancelOrderAlreadyPaid() {
 			OrderUUID: orderUUID,
 		}
 
-		paidOrderFromDB = &entity.Order{
+		paidOrderFromDB = &domain.Order{
 			OrderUUID:       orderUUID,
 			UserUUID:        userUUID,
 			PartUUIDs:       partsUUIDs,

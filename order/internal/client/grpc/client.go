@@ -3,12 +3,12 @@ package grpc
 import (
 	"context"
 
+	"github.com/Daniil-Sakharov/RocketFactory/order/internal/model/domain"
 	"github.com/Daniil-Sakharov/RocketFactory/order/internal/model/dto"
-	"github.com/Daniil-Sakharov/RocketFactory/order/internal/model/entity"
 )
 
 type InventoryClient interface {
-	ListParts(ctx context.Context, filter *entity.PartsFilter) ([]*entity.Part, error)
+	ListParts(ctx context.Context, filter *domain.PartsFilter) ([]*domain.Part, error)
 }
 
 type PaymentClient interface {

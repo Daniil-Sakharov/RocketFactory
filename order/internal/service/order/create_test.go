@@ -6,8 +6,8 @@ import (
 	"github.com/brianvoe/gofakeit/v7"
 	"github.com/stretchr/testify/mock"
 
+	"github.com/Daniil-Sakharov/RocketFactory/order/internal/model/domain"
 	"github.com/Daniil-Sakharov/RocketFactory/order/internal/model/dto"
-	"github.com/Daniil-Sakharov/RocketFactory/order/internal/model/entity"
 	"github.com/Daniil-Sakharov/RocketFactory/order/internal/model/vo"
 )
 
@@ -22,18 +22,18 @@ func (s *ServiceSuite) TestCreateOrderSuccess() {
 			PartUUIDs: []string{partUUID1, partUUID2},
 		}
 
-		filter = &entity.PartsFilter{
+		filter = &domain.PartsFilter{
 			Uuids: []string{partUUID1, partUUID2},
 		}
 
-		partsFromInventory = []*entity.Part{
+		partsFromInventory = []*domain.Part{
 			{
 				Uuid:          partUUID1,
 				Name:          "RD-180 Engine",
 				Description:   "Rocket engine",
 				Price:         25000000.00,
 				StockQuantity: 5,
-				Category:      entity.CATEGORY_ENGINE,
+				Category:      domain.CATEGORY_ENGINE,
 			},
 			{
 				Uuid:          partUUID2,
@@ -41,7 +41,7 @@ func (s *ServiceSuite) TestCreateOrderSuccess() {
 				Description:   "Fuel",
 				Price:         150.00,
 				StockQuantity: 1000,
-				Category:      entity.CATEGORY_FUEL,
+				Category:      domain.CATEGORY_FUEL,
 			},
 		}
 
@@ -50,7 +50,7 @@ func (s *ServiceSuite) TestCreateOrderSuccess() {
 
 	s.inventoryClient.On("ListParts", s.ctx, filter).Return(partsFromInventory, nil)
 
-	s.orderRepository.On("Create", s.ctx, mock.MatchedBy(func(order *entity.Order) bool {
+	s.orderRepository.On("Create", s.ctx, mock.MatchedBy(func(order *domain.Order) bool {
 		return order.UserUUID == userUUID &&
 			len(order.PartUUIDs) == 2 &&
 			order.TotalPrice == expectedTotalPrice &&
@@ -79,7 +79,7 @@ func (s *ServiceSuite) TestCreateOrderInventoryServiceError() {
 			PartUUIDs: []string{partUUID1, partUUID2},
 		}
 
-		filter = &entity.PartsFilter{
+		filter = &domain.PartsFilter{
 			Uuids: []string{partUUID1, partUUID2},
 		}
 

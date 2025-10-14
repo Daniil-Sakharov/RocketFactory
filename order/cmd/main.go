@@ -3,14 +3,19 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
 	"time"
 
+	_ "github.com/jackc/pgx/v5/stdlib"
+	"github.com/jmoiron/sqlx"
+	"github.com/joho/godotenv"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 
 	apiv1 "github.com/Daniil-Sakharov/RocketFactory/order/internal/api/order/v1"
 	inventoryClient "github.com/Daniil-Sakharov/RocketFactory/order/internal/client/grpc/inventory/v1"
 	paymentClient "github.com/Daniil-Sakharov/RocketFactory/order/internal/client/grpc/payment/v1"
+	"github.com/Daniil-Sakharov/RocketFactory/order/internal/migrator"
 	orderRepo "github.com/Daniil-Sakharov/RocketFactory/order/internal/repository/order"
 	orderService "github.com/Daniil-Sakharov/RocketFactory/order/internal/service/order"
 	orderV1 "github.com/Daniil-Sakharov/RocketFactory/shared/pkg/openapi/order/v1"
@@ -53,6 +58,32 @@ func setupGRPCConnections() (*grpc.ClientConn, *grpc.ClientConn, error) {
 
 // run инициализирует и запускает Order Service
 func run() error {
+	err := godotenv.Load(".env")
+	if err != nil {
+		log.Printf("failed to load .env file: %v\n", err)
+		return err
+	}
+	dbURI := os.Getenv("DB_URI")
+	migratorDir := os.Getenv("MIGRATIONS_DIR")
+	db, err := sqlx.Connect("pgx", dbURI)
+	if err != nil {
+		log.Fatalf("❌ Failed to connect to PostgreSQL via sqlx: %v", err)
+	}
+	defer func() {
+		if err = db.Close(); err != nil {
+			log.Printf("failed to close db: %v", err)
+		}
+	}()
+	if err = db.Ping(); err != nil {
+		log.Printf("❌ Failed to ping PostgreSQL: %v", err)
+	}
+
+	mgrt := migrator.NewMigrator(db.DB, migratorDir)
+	err = mgrt.Up()
+	if err != nil {
+		log.Printf("❌ Failed to make migrations: %v", err)
+	}
+
 	log.Println("🔌 Connecting to external services...")
 	inventoryConn, paymentConn, err := setupGRPCConnections()
 	if err != nil {
@@ -79,7 +110,7 @@ func run() error {
 
 	log.Println("✅ Client layer initialized")
 
-	repository := orderRepo.NewRepository()
+	repository := orderRepo.NewRepository(db)
 
 	log.Println("✅ Repository layer initialized (in-memory)")
 
