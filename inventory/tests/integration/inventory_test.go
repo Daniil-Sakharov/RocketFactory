@@ -25,13 +25,17 @@ var _ = Describe("InventoryService", func() {
 
 		// Создаём gRPC клиент
 		// Port availability уже проверен в setupTestEnvironment через waitForPort
+		GinkgoWriter.Printf("🔌 Подключение к gRPC серверу по адресу: %s\n", env.App.Address())
+		
 		conn, err := grpc.NewClient(
 			env.App.Address(),
 			grpc.WithTransportCredentials(insecure.NewCredentials()),
 		)
 		Expect(err).ToNot(HaveOccurred(), "ожидали успешное подключение к gRPC приложению")
+		GinkgoWriter.Println("✅ gRPC клиент создан успешно")
 
 		inventoryClient = inventoryV1.NewInventoryServiceClient(conn)
+		GinkgoWriter.Println("✅ InventoryServiceClient инициализирован")
 	})
 
 	AfterEach(func() {
