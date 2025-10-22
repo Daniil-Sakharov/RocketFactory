@@ -63,7 +63,7 @@ func (r *repository) ListParts(ctx context.Context, filter *model.PartsFilter) (
 	err = cursor.All(ctx, &repoParts)
 	if err != nil {
 		logger.Error(ctx, "Failed to decode cursor", zap.Error(err))
-		return nil, fmt.Errorf("failed to parse")
+		return nil, fmt.Errorf("failed to parse: %w", err)
 	}
 
 	// Debug logging for tests
