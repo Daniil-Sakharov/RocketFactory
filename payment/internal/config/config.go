@@ -1,8 +1,9 @@
 package config
 
 import (
-	"github.com/Daniil-Sakharov/RocketFactory/payment/internal/config/env"
 	"github.com/joho/godotenv"
+
+	"github.com/Daniil-Sakharov/RocketFactory/payment/internal/config/env"
 )
 
 var appConfig *config
@@ -29,7 +30,7 @@ func Load(path ...string) error {
 
 	appConfig = &config{
 		Payment: paymentCfg,
-		Logger: loggerCfg,
+		Logger:  loggerCfg,
 	}
 
 	return nil

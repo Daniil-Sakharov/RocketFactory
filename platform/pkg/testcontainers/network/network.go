@@ -3,6 +3,7 @@ package network
 import (
 	"context"
 	"fmt"
+
 	"github.com/testcontainers/testcontainers-go"
 	tcnetwork "github.com/testcontainers/testcontainers-go/network"
 )

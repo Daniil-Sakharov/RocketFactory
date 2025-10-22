@@ -7,13 +7,14 @@ import (
 	"os"
 	"time"
 
-	"github.com/Daniil-Sakharov/RocketFactory/inventory/internal/converter"
-	repoConverter "github.com/Daniil-Sakharov/RocketFactory/inventory/internal/repository/converter"
-	inventoryV1 "github.com/Daniil-Sakharov/RocketFactory/shared/pkg/proto/inventory/v1"
 	"github.com/brianvoe/gofakeit/v7"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"google.golang.org/protobuf/types/known/timestamppb"
+
+	"github.com/Daniil-Sakharov/RocketFactory/inventory/internal/converter"
+	repoConverter "github.com/Daniil-Sakharov/RocketFactory/inventory/internal/repository/converter"
+	inventoryV1 "github.com/Daniil-Sakharov/RocketFactory/shared/pkg/proto/inventory/v1"
 )
 
 // InsertTestPart — вставляет одну тестовую деталь в коллекцию Mongo и возвращает её UUID
@@ -23,6 +24,7 @@ func (env *TestEnvironment) InsertTestPart(ctx context.Context) (string, error) 
 
 	partDoc := bson.M{
 		"_id":            partUUID,
+		"uuid":           partUUID, // ВАЖНО: добавляем поле uuid для корректного поиска
 		"name":           gofakeit.CarMaker() + " " + gofakeit.CarModel(),
 		"description":    gofakeit.Sentence(10),
 		"price":          gofakeit.Float64Range(100.0, 100000.0),
@@ -55,7 +57,7 @@ func (env *TestEnvironment) InsertTestPart(ctx context.Context) (string, error) 
 	// Используем базу данных из переменной окружения MONGO_DATABASE
 	databaseName := os.Getenv("MONGO_DATABASE")
 	if databaseName == "" {
-		databaseName = "inventory-service" // fallback значение
+		databaseName = "inventory" // fallback значение должно совпадать с .env
 	}
 
 	_, err := env.Mongo.Client().Database(databaseName).Collection(partsCollectionName).InsertOne(ctx, partDoc)
@@ -70,11 +72,24 @@ func (env *TestEnvironment) InsertTestPart(ctx context.Context) (string, error) 
 func (env *TestEnvironment) InsertTestParts(ctx context.Context) error {
 	now := time.Now()
 
+	// Используем базу данных из переменной окружения MONGO_DATABASE
+	databaseName := os.Getenv("MONGO_DATABASE")
+	if databaseName == "" {
+		databaseName = "inventory" // fallback значение должно совпадать с .env
+	}
+
 	// Создаем 5 разных деталей с разными категориями
+	uuid1 := gofakeit.UUID()
+	uuid2 := gofakeit.UUID()
+	uuid3 := gofakeit.UUID()
+	uuid4 := gofakeit.UUID()
+	uuid5 := gofakeit.UUID()
+
 	parts := []interface{}{
 		// Двигатель
 		bson.M{
-			"_id":            gofakeit.UUID(),
+			"_id":            uuid1,
+			"uuid":           uuid1, // ВАЖНО: добавляем поле uuid для корректного поиска
 			"name":           "Ионный двигатель X-500",
 			"description":    "Высокоэффективный ионный двигатель для межпланетных перелетов",
 			"price":          50000.0,
@@ -98,7 +113,8 @@ func (env *TestEnvironment) InsertTestParts(ctx context.Context) error {
 		},
 		// Топливо
 		bson.M{
-			"_id":            gofakeit.UUID(),
+			"_id":            uuid2,
+			"uuid":           uuid2,
 			"name":           "Жидкий ксенон премиум",
 			"description":    "Высокочистый жидкий ксенон для ионных двигателей",
 			"price":          1500.0,
@@ -122,7 +138,8 @@ func (env *TestEnvironment) InsertTestParts(ctx context.Context) error {
 		},
 		// Иллюминатор
 		bson.M{
-			"_id":            gofakeit.UUID(),
+			"_id":            uuid3,
+			"uuid":           uuid3,
 			"name":           "Панорамный иллюминатор AstroView",
 			"description":    "Многослойный защищенный иллюминатор с антибликовым покрытием",
 			"price":          8000.0,
@@ -146,7 +163,8 @@ func (env *TestEnvironment) InsertTestParts(ctx context.Context) error {
 		},
 		// Крыло
 		bson.M{
-			"_id":            gofakeit.UUID(),
+			"_id":            uuid4,
+			"uuid":           uuid4,
 			"name":           "Аэродинамическое крыло Delta-9",
 			"description":    "Титановое крыло с регулируемой геометрией для атмосферного полета",
 			"price":          35000.0,
@@ -170,7 +188,8 @@ func (env *TestEnvironment) InsertTestParts(ctx context.Context) error {
 		},
 		// Еще один двигатель
 		bson.M{
-			"_id":            gofakeit.UUID(),
+			"_id":            uuid5,
+			"uuid":           uuid5,
 			"name":           "Плазменный двигатель Nebula-7",
 			"description":    "Компактный плазменный двигатель нового поколения",
 			"price":          75000.0,
@@ -194,16 +213,20 @@ func (env *TestEnvironment) InsertTestParts(ctx context.Context) error {
 		},
 	}
 
-	// Используем базу данных из переменной окружения MONGO_DATABASE
-	databaseName := os.Getenv("MONGO_DATABASE")
-	if databaseName == "" {
-		databaseName = "inventory-service" // fallback значение
-	}
+	collection := env.Mongo.Client().Database(databaseName).Collection(partsCollectionName)
 
-	_, err := env.Mongo.Client().Database(databaseName).Collection(partsCollectionName).InsertMany(ctx, parts)
+	result, err := collection.InsertMany(ctx, parts)
 	if err != nil {
 		return err
 	}
+
+	// Verify insertion
+	count, err := collection.CountDocuments(ctx, bson.M{})
+	if err != nil {
+		return err
+	}
+
+	println("DEBUG: Inserted", len(result.InsertedIDs), "documents, total count in collection:", count) //nolint:forbidigo // Debug logging
 
 	return nil
 }
@@ -231,6 +254,7 @@ func (env *TestEnvironment) InsertTestPartWithData(ctx context.Context, part *in
 
 	partDoc := bson.M{
 		"_id":            partUUID,
+		"uuid":           partUUID, // ВАЖНО: добавляем поле uuid
 		"name":           part.Name,
 		"description":    part.Description,
 		"price":          part.Price,
@@ -285,7 +309,7 @@ func (env *TestEnvironment) InsertTestPartWithData(ctx context.Context, part *in
 	// Используем базу данных из переменной окружения MONGO_DATABASE
 	databaseName := os.Getenv("MONGO_DATABASE")
 	if databaseName == "" {
-		databaseName = "inventory-service" // fallback значение
+		databaseName = "inventory" // fallback значение должно совпадать с .env
 	}
 
 	_, err := env.Mongo.Client().Database(databaseName).Collection(partsCollectionName).InsertOne(ctx, partDoc)
@@ -335,7 +359,7 @@ func (env *TestEnvironment) ClearPartsCollection(ctx context.Context) error {
 	// Используем базу данных из переменной окружения MONGO_DATABASE
 	databaseName := os.Getenv("MONGO_DATABASE")
 	if databaseName == "" {
-		databaseName = "inventory-service" // fallback значение
+		databaseName = "inventory" // fallback значение должно совпадать с .env
 	}
 
 	_, err := env.Mongo.Client().Database(databaseName).Collection(partsCollectionName).DeleteMany(ctx, bson.M{})

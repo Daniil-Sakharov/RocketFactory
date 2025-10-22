@@ -6,15 +6,16 @@ import (
 	"fmt"
 	"net"
 
+	"go.uber.org/zap"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/reflection"
+
 	"github.com/Daniil-Sakharov/RocketFactory/inventory/internal/config"
 	"github.com/Daniil-Sakharov/RocketFactory/platform/pkg/closer"
 	"github.com/Daniil-Sakharov/RocketFactory/platform/pkg/grpc/health"
 	"github.com/Daniil-Sakharov/RocketFactory/platform/pkg/logger"
 	inventoryv1 "github.com/Daniil-Sakharov/RocketFactory/shared/pkg/proto/inventory/v1"
-	"go.uber.org/zap"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
-	"google.golang.org/grpc/reflection"
 )
 
 type App struct {
@@ -116,7 +117,25 @@ func (a *App) initListener(_ context.Context) error {
 }
 
 func (a *App) initGRPCServer(ctx context.Context) error {
-	a.grpcServer = grpc.NewServer(grpc.Creds(insecure.NewCredentials()))
+	// Recovery interceptor to catch panics in gRPC handlers
+	recoveryInterceptor := func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp interface{}, err error) {
+		defer func() {
+			if r := recover(); r != nil {
+				logger.Error(ctx, "🔥 PANIC in gRPC handler",
+					zap.String("method", info.FullMethod),
+					zap.Any("panic", r),
+					zap.Stack("stacktrace"))
+				// Return error instead of crashing
+				err = fmt.Errorf("panic in handler %s: %v", info.FullMethod, r)
+			}
+		}()
+		return handler(ctx, req)
+	}
+
+	a.grpcServer = grpc.NewServer(
+		grpc.Creds(insecure.NewCredentials()),
+		grpc.UnaryInterceptor(recoveryInterceptor),
+	)
 	closer.AddNamed("gRPC server", func(ctx context.Context) error {
 		a.grpcServer.GracefulStop()
 		return nil
