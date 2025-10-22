@@ -18,8 +18,14 @@ import (
 
 func (r *repository) ListParts(ctx context.Context, filter *model.PartsFilter) ([]*model.Part, error) {
 	logger.Info(ctx, "🔍 ListParts called", zap.Any("filter", filter))
-
+	
 	mongoFilter := bson.M{}
+	
+	// Handle nil filter
+	if filter == nil {
+		logger.Info(ctx, "Filter is nil, returning all documents")
+		filter = &model.PartsFilter{} // Create empty filter
+	}
 
 	if len(filter.Uuids) > 0 {
 		mongoFilter["uuid"] = bson.M{"$in": filter.Uuids}
