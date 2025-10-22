@@ -20,7 +20,6 @@
 # env file
 .env
 /.idea
-.env.template
 /.vscode
 /.qodo
 /.cursor
