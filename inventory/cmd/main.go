@@ -1,37 +1,37 @@
 package main
 
 import (
-	"context"
-	"fmt"
-	"os/signal"
-	"syscall"
-	"time"
+    "context"
+    "fmt"
+    "os/signal"
+    "syscall"
+    "time"
 
-	"github.com/Daniil-Sakharov/RocketFactory/inventory/internal/app"
-	"github.com/Daniil-Sakharov/RocketFactory/inventory/internal/config"
-	"github.com/Daniil-Sakharov/RocketFactory/platform/pkg/closer"
-	"github.com/Daniil-Sakharov/RocketFactory/platform/pkg/logger"
-	"go.uber.org/zap"
+    "github.com/Daniil-Sakharov/RocketFactory/inventory/internal/app"
+    "github.com/Daniil-Sakharov/RocketFactory/inventory/internal/config"
+    "github.com/Daniil-Sakharov/RocketFactory/platform/pkg/closer"
+    "github.com/Daniil-Sakharov/RocketFactory/platform/pkg/logger"
+    "go.uber.org/zap"
 )
 
 func main() {
 	// Перехватываем панику для отладки
 	defer func() {
-		if r := recover(); r != nil {
-			fmt.Printf("🔥 PANIC: %v\n", r)
-			panic(r) // Повторно бросаем панику
-		}
+        if r := recover(); r != nil {
+            logger.Error(context.Background(), "panic recovered", zap.Any("panic", r))
+            panic(r) // Повторно бросаем панику
+        }
 	}()
 
 	// .env файл опционален:
 	// - В локальной разработке: загружается из корня проекта или указанного пути
 	// - В Docker: переменные передаются через environment (-e флаги)
 	err := config.Load()
-	if err != nil {
-		fmt.Printf("❌ Failed to load config: %v\n", err)
-		panic(fmt.Errorf("error to load config: %w", err))
-	}
-	fmt.Println("✅ Config loaded")
+    if err != nil {
+        logger.Error(context.Background(), "failed to load config", zap.Error(err))
+        panic(fmt.Errorf("error to load config: %w", err))
+    }
+    logger.Info(context.Background(), "config loaded")
 
 	appCtx, appCancel := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer appCancel()
@@ -39,24 +39,22 @@ func main() {
 
 	closer.Configure(syscall.SIGINT, syscall.SIGTERM)
 
-	fmt.Println("🏗️ Creating application...")
+    logger.Info(appCtx, "creating application")
 	a, err := app.New(appCtx)
-	if err != nil {
-		fmt.Printf("❌ Failed to create app: %v\n", err)
-		logger.Error(appCtx, "❌ Не удалось создать приложение", zap.Error(err))
-		return
-	}
-	fmt.Println("✅ Application created")
+    if err != nil {
+        logger.Error(appCtx, "failed to create application", zap.Error(err))
+        return
+    }
+    logger.Info(appCtx, "application created")
 
-	fmt.Println("🚀 Running application...")
+    logger.Info(appCtx, "running application")
 	err = a.Run(appCtx)
-	if err != nil {
-		fmt.Printf("❌ App.Run() returned error: %v\n", err)
-		logger.Error(appCtx, "❌ Ошибка при работе приложения", zap.Error(err))
-		return
-	}
+    if err != nil {
+        logger.Error(appCtx, "application run returned error", zap.Error(err))
+        return
+    }
 
-	fmt.Println("👋 Application exited normally")
+    logger.Info(appCtx, "application exited normally")
 
 }
 
