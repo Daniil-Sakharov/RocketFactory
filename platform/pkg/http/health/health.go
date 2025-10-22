@@ -5,9 +5,9 @@ import (
 	"net/http"
 )
 
-type Config struct{
+type Config struct {
 	ServiceName string
-	Version string
+	Version     string
 }
 
 func NewHandler(cfg Config) http.HandlerFunc {
@@ -19,6 +19,6 @@ func NewHandler(cfg Config) http.HandlerFunc {
 		}
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		_ = json.NewEncoder(w).Encode(response)
+		_ = json.NewEncoder(w).Encode(response) //nolint:gosec // Ошибка encoding в HTTP handler не критична
 	}
 }

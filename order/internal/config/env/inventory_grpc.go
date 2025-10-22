@@ -1,16 +1,17 @@
 package env
 
 import (
-	"github.com/caarlos0/env/v11"
 	"net"
+
+	"github.com/caarlos0/env/v11"
 )
 
-type inventoryGRPCEnvConfig struct{
+type inventoryGRPCEnvConfig struct {
 	Host string `env:"INVENTORY_GRPC_HOST,required"`
 	Port string `env:"INVENTORY_GRPC_PORT,required"`
 }
 
-type inventoryGRPCConfig struct{
+type inventoryGRPCConfig struct {
 	raw inventoryGRPCEnvConfig
 }
 

@@ -1,10 +1,13 @@
 //go:build integration
+
 package integration
 
 import (
 	"context"
-	"github.com/Daniil-Sakharov/RocketFactory/platform/pkg/logger"
+
 	"go.uber.org/zap"
+
+	"github.com/Daniil-Sakharov/RocketFactory/platform/pkg/logger"
 )
 
 func teardownTestEnvironment(ctx context.Context, env *TestEnvironment) {

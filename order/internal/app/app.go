@@ -4,12 +4,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net/http"
+
 	"github.com/Daniil-Sakharov/RocketFactory/order/internal/config"
 	"github.com/Daniil-Sakharov/RocketFactory/platform/pkg/closer"
 	"github.com/Daniil-Sakharov/RocketFactory/platform/pkg/http/health"
 	"github.com/Daniil-Sakharov/RocketFactory/platform/pkg/logger"
 	orderV1 "github.com/Daniil-Sakharov/RocketFactory/shared/pkg/openapi/order/v1"
-	"net/http"
 )
 
 type App struct {
@@ -40,7 +41,7 @@ func (a *App) initDeps(ctx context.Context) error {
 		a.initHTTPServer,
 	}
 
-	for _, f := range inits{
+	for _, f := range inits {
 		err := f(ctx)
 		if err != nil {
 			return err
@@ -82,7 +83,6 @@ func (a *App) initHTTPServer(ctx context.Context) error {
 		return err
 	}
 
-
 	mux.Handle("/health", health.NewHandler(health.Config{
 		ServiceName: "order-service",
 		Version:     "1.0.0",
@@ -110,7 +110,6 @@ func (a *App) runHTTPServer(ctx context.Context) error {
 	if err := a.httpServer.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 		return err
 	}
-
 
 	return nil
 }

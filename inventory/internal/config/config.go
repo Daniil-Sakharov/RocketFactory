@@ -1,9 +1,11 @@
 package config
 
 import (
-	"github.com/Daniil-Sakharov/RocketFactory/inventory/internal/config/env"
-	"github.com/joho/godotenv"
 	"os"
+
+	"github.com/joho/godotenv"
+
+	"github.com/Daniil-Sakharov/RocketFactory/inventory/internal/config/env"
 )
 
 var appConfig *config
