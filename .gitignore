@@ -31,9 +31,12 @@ node_modules
 /coverage/
 /microservices-course-examples-main
 /microservices-course-homework-main
+.mockery_boilerplate_text.txt
 
 # Swagger UI (автогенерация)
 **/api/swagger.json
 **/api/swagger-ui.html
 api/swagger.json
 api/swagger-ui.html
+package-lock.json
+package.json
