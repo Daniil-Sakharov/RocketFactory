@@ -4,16 +4,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
-	"go.uber.org/zap"
 
 	"github.com/Daniil-Sakharov/RocketFactory/inventory/internal/model"
 	"github.com/Daniil-Sakharov/RocketFactory/inventory/internal/repository/converter"
 	repoModel "github.com/Daniil-Sakharov/RocketFactory/inventory/internal/repository/model"
-	"github.com/Daniil-Sakharov/RocketFactory/platform/pkg/logger"
 )
 
 func (r *repository) ListParts(ctx context.Context, filter *model.PartsFilter) ([]*model.Part, error) {
@@ -67,6 +64,12 @@ func (r *repository) ListParts(ctx context.Context, filter *model.PartsFilter) (
 		logger.Error(ctx, "Failed to decode cursor", zap.Error(err))
 		return nil, fmt.Errorf("failed to parse: %w", err)
 	}
+
+	modelParts := converter.PartsToModel(repoParts)
+
+	return modelParts, nil
+}
+
 
 	modelParts := converter.PartsToModel(repoParts)
 
