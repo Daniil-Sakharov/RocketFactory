@@ -41,9 +41,12 @@ var _ = BeforeSuite(func() {
 	suiteCtx, suiteCancel = context.WithTimeout(context.Background(), testsTimeout)
 
 	// Загружаем .env файл и устанавливаем переменные в окружение
-	envVars, err := godotenv.Read(filepath.Join("..", "..", "..", "deploy", "compose", "inventory", ".env"))
+	envFilePath := filepath.Join("..", "..", "..", "deploy", "compose", "inventory", ".env")
+	envVars, err := godotenv.Read(envFilePath)
 	if err != nil {
-		logger.Fatal(suiteCtx, "Не удалось загрузить .env файл", zap.Error(err))
+		logger.Fatal(suiteCtx, "Не удалось загрузить .env файл. Убедитесь, что вы запустили 'task env:generate' перед запуском тестов.",
+			zap.String("path", envFilePath),
+			zap.Error(err))
 	}
 
 	// Устанавливаем переменные в окружение процесса
@@ -52,6 +55,7 @@ var _ = BeforeSuite(func() {
 	}
 
 	logger.Info(suiteCtx, "Запуск тестового окружения...")
+	logger.Info(suiteCtx, "⚠️  Для запуска этих тестов требуется Docker. Убедитесь, что Docker установлен и запущен.")
 	env = setupTestEnvironment(suiteCtx)
 })
 

@@ -41,10 +41,12 @@ type TestEnvironment struct {
 
 func setupTestEnvironment(ctx context.Context) *TestEnvironment {
 	logger.Info(ctx, "🚀 Подготовка тестового окружения...")
+	logger.Info(ctx, "📋 Требования: Docker должен быть установлен и запущен")
 
 	generatedNetwork, err := network.NewNetwork(ctx, projectName)
 	if err != nil {
-		logger.Fatal(ctx, "не удалось создать общую сеть", zap.Error(err))
+		logger.Fatal(ctx, "не удалось создать общую сеть. Убедитесь, что Docker установлен и запущен (проверьте: docker ps)",
+			zap.Error(err))
 	}
 	logger.Info(ctx, "✅ Сеть успешно создана")
 
