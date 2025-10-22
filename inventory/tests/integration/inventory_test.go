@@ -26,7 +26,8 @@ var _ = Describe("InventoryService", func() {
 
 		// Даем Docker время настроить port mapping
 		// Приложение готово внутри контейнера, но mapped port может быть еще не доступен с хоста
-		time.Sleep(1 * time.Second)
+		// В CI/CD среде может потребоваться больше времени
+		time.Sleep(3 * time.Second)
 
 		// Создаём gRPC клиент
 		conn, err := grpc.NewClient(
