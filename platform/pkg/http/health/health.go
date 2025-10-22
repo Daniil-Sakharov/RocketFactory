@@ -19,6 +19,8 @@ func NewHandler(cfg Config) http.HandlerFunc {
 		}
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		_ = json.NewEncoder(w).Encode(response)
+        if err := json.NewEncoder(w).Encode(response); err != nil {
+            // Nothing to do: response writer may be closed by client; best effort only
+        }
 	}
 }
