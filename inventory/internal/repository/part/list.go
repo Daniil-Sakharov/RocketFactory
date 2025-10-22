@@ -68,13 +68,6 @@ func (r *repository) ListParts(ctx context.Context, filter *model.PartsFilter) (
 		return nil, fmt.Errorf("failed to parse: %w", err)
 	}
 
-	// Debug logging for tests
-	logger.Info(ctx, "📊 ListParts result",
-		zap.Int("found_count", len(repoParts)),
-		zap.String("collection", r.collection.Name()),
-		zap.Any("mongo_filter", mongoFilter))
-	log.Printf("DEBUG: ListParts found %d parts in database, collection: %s\n", len(repoParts), r.collection.Name()) //nolint:forbidigo // Debug logging
-
 	modelParts := converter.PartsToModel(repoParts)
 
 	return modelParts, nil

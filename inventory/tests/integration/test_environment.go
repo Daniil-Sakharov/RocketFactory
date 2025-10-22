@@ -78,9 +78,6 @@ func (env *TestEnvironment) InsertTestParts(ctx context.Context) error {
 		databaseName = "inventory" // fallback значение должно совпадать с .env
 	}
 
-	// Log database name for debugging
-	println("DEBUG: Inserting test data into database:", databaseName, "collection:", partsCollectionName) //nolint:forbidigo // Debug logging for tests
-
 	// Создаем 5 разных деталей с разными категориями
 	uuid1 := gofakeit.UUID()
 	uuid2 := gofakeit.UUID()
