@@ -34,7 +34,9 @@ func (r *repository) ListParts(ctx context.Context, filter *model.PartsFilter) (
 		mongoFilter["name"] = bson.M{"$in": filter.Names}
 	}
 	if len(filter.Categories) > 0 {
-		mongoFilter["category"] = bson.M{"$in": filter.Categories}
+		// Convert domain categories to repository format (strings)
+		repoCategories := converter.CategoriesToRepo(filter.Categories)
+		mongoFilter["category"] = bson.M{"$in": repoCategories}
 	}
 	if len(filter.ManufacturerCountries) > 0 {
 		mongoFilter["manufacturer_country"] = bson.M{"$in": filter.ManufacturerCountries}
