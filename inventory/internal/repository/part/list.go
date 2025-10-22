@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -17,6 +16,11 @@ import (
 func (r *repository) ListParts(ctx context.Context, filter *model.PartsFilter) ([]*model.Part, error) {
 	mongoFilter := bson.M{}
 
+	// Handle nil filter
+	if filter == nil {
+		filter = &model.PartsFilter{} // Create empty filter
+	}
+
 	if len(filter.Uuids) > 0 {
 		mongoFilter["uuid"] = bson.M{"$in": filter.Uuids}
 	}
@@ -24,7 +28,9 @@ func (r *repository) ListParts(ctx context.Context, filter *model.PartsFilter) (
 		mongoFilter["name"] = bson.M{"$in": filter.Names}
 	}
 	if len(filter.Categories) > 0 {
-		mongoFilter["category"] = bson.M{"$in": filter.Categories}
+		// Convert domain categories to repository format (strings)
+		repoCategories := converter.CategoriesToRepo(filter.Categories)
+		mongoFilter["category"] = bson.M{"$in": repoCategories}
 	}
 	if len(filter.ManufacturerCountries) > 0 {
 		mongoFilter["manufacturer_country"] = bson.M{"$in": filter.ManufacturerCountries}
@@ -44,16 +50,14 @@ func (r *repository) ListParts(ctx context.Context, filter *model.PartsFilter) (
 	}
 
 	defer func() {
-		err = cursor.Close(ctx)
-		if err != nil {
-			log.Println("failed to close cursor")
-		}
+		_ = cursor.Close(ctx) //nolint:gosec // Cursor close error is not critical
 	}()
 
 	err = cursor.All(ctx, &repoParts)
 	if err != nil {
-		return nil, fmt.Errorf("failed to parse")
+		return nil, fmt.Errorf("failed to parse: %w", err)
 	}
+
 	modelParts := converter.PartsToModel(repoParts)
 
 	return modelParts, nil

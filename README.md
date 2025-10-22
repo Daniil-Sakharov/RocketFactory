@@ -167,7 +167,7 @@ cd inventory && go run ./cmd
 
 **gRPC API:**
 - `GetPart` — получить деталь по UUID
-- `ListParts` — список деталей с фильтрацией
+- `ListParts` — список деталей с фильтрацией 
 
 ---
 
