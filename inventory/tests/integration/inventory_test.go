@@ -18,7 +18,6 @@ var _ = Describe("InventoryService", func() {
 		ctx             context.Context
 		cancel          context.CancelFunc
 		inventoryClient inventoryV1.InventoryServiceClient
-		grpcConn        *grpc.ClientConn
 	)
 
 	BeforeEach(func() {
