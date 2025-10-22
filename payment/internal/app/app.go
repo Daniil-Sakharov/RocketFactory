@@ -6,14 +6,15 @@ import (
 	"fmt"
 	"net"
 
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/reflection"
+
 	"github.com/Daniil-Sakharov/RocketFactory/payment/internal/config"
 	"github.com/Daniil-Sakharov/RocketFactory/platform/pkg/closer"
 	"github.com/Daniil-Sakharov/RocketFactory/platform/pkg/grpc/health"
 	"github.com/Daniil-Sakharov/RocketFactory/platform/pkg/logger"
 	paymentv1 "github.com/Daniil-Sakharov/RocketFactory/shared/pkg/proto/payment/v1"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
-	"google.golang.org/grpc/reflection"
 )
 
 type App struct {
