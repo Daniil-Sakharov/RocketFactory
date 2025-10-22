@@ -216,10 +216,20 @@ func (env *TestEnvironment) InsertTestParts(ctx context.Context) error {
 		},
 	}
 
-	_, err := env.Mongo.Client().Database(databaseName).Collection(partsCollectionName).InsertMany(ctx, parts)
+	collection := env.Mongo.Client().Database(databaseName).Collection(partsCollectionName)
+
+	result, err := collection.InsertMany(ctx, parts)
 	if err != nil {
 		return err
 	}
+
+	// Verify insertion
+	count, err := collection.CountDocuments(ctx, bson.M{})
+	if err != nil {
+		return err
+	}
+
+	println("DEBUG: Inserted", len(result.InsertedIDs), "documents, total count in collection:", count) //nolint:forbidigo // Debug logging
 
 	return nil
 }
