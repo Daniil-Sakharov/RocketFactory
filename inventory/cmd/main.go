@@ -16,13 +16,11 @@ import (
 )
 
 func main() {
-
 	defer func() {
 		if r := recover(); r != nil {
 			panic(r)
 		}
 	}()
-
 
 	err := config.Load()
 	if err != nil {
@@ -46,7 +44,6 @@ func main() {
 		logger.Error(appCtx, "❌ Ошибка при работе приложения", zap.Error(err))
 		return
 	}
-
 }
 
 func gracefulShutdown() {
