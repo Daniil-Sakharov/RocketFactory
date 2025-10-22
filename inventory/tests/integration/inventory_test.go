@@ -24,18 +24,36 @@ var _ = Describe("InventoryService", func() {
 	BeforeEach(func() {
 		ctx, cancel = context.WithCancel(suiteCtx)
 
-		// Даем Docker время настроить port mapping
-		// Приложение готово внутри контейнера, но mapped port может быть еще не доступен с хоста
-		// В CI/CD среде может потребоваться больше времени
-		time.Sleep(3 * time.Second)
+		// Retry logic для подключения к gRPC серверу
+		// В CI/CD Docker port mapping может занять несколько секунд
+		var conn *grpc.ClientConn
+		var err error
+		maxRetries := 10
+		retryDelay := time.Second
 
-		// Создаём gRPC клиент
-		conn, err := grpc.NewClient(
-			env.App.Address(),
-			grpc.WithTransportCredentials(insecure.NewCredentials()),
-		)
-		Expect(err).ToNot(HaveOccurred(), "ожидали успешное подключение к gRPC приложению")
-
+		for attempt := 1; attempt <= maxRetries; attempt++ {
+			conn, err = grpc.NewClient(
+				env.App.Address(),
+				grpc.WithTransportCredentials(insecure.NewCredentials()),
+			)
+			if err == nil {
+				// Try a simple health check or connection
+				inventoryClient = inventoryV1.NewInventoryServiceClient(conn)
+				// Try to actually use the connection
+				_, listErr := inventoryClient.ListParts(ctx, &inventoryV1.ListPartsRequest{})
+				if listErr == nil || !isConnectionError(listErr) {
+					// Connection successful or got a valid response
+					break
+				}
+				conn.Close()
+			}
+			
+			if attempt < maxRetries {
+				time.Sleep(retryDelay)
+			}
+		}
+		
+		Expect(err).ToNot(HaveOccurred(), "ожидали успешное создание gRPC клиента")
 		inventoryClient = inventoryV1.NewInventoryServiceClient(conn)
 	})
 
