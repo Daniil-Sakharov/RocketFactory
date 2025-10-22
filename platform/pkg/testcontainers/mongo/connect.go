@@ -42,7 +42,7 @@ func connectMongoClient(ctx context.Context, uri string) (*mongo.Client, error) 
 
 		// Если ping не прошел, закрываем клиента и пробуем снова
 		// Игнорируем ошибку disconnect - попытаемся переподключиться
-		_ = client.Disconnect(ctx)
+		_ = client.Disconnect(ctx) //nolint:gosec // Error is intentionally ignored
 
 		if attempt < maxRetries {
 			timer := time.NewTimer(retryDelay)
