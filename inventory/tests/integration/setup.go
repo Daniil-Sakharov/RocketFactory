@@ -19,14 +19,6 @@ import (
 	"github.com/Daniil-Sakharov/RocketFactory/platform/pkg/testcontainers/path"
 )
 
-// getMongo returns the testcontainers mongo container interface
-func (env *TestEnvironment) getMongo() interface {
-	Container() testcontainers.Container
-	MappedPort(context.Context, nat.Port) (nat.Port, error)
-} {
-	return env.Mongo
-}
-
 const (
 	// Параметры для контейнеров
 	inventoryAppName    = "inventory-app"
@@ -106,20 +98,14 @@ func setupTestEnvironment(ctx context.Context) *TestEnvironment {
 	waitStrategy := wait.ForListeningPort(nat.Port(grpcPort + "/tcp")).
 		WithStartupTimeout(startupTimeout)
 
-	// Get MongoDB mapped port so app can connect via host
-	mongoMappedPort, err := generatedMongo.Container().MappedPort(ctx, nat.Port(testcontainers.MongoPort+"/tcp"))
-	if err != nil {
-		cleanupTestEnvironment(ctx, &TestEnvironment{Network: generatedNetwork, Mongo: generatedMongo})
-		logger.Fatal(ctx, "не удалось получить mapped port MongoDB", zap.Error(err))
-	}
-
 	// App connects to MongoDB via host.docker.internal (mapped port) instead of container name
 	// This allows app to be without network for better port mapping compatibility in CI/CD
+	mongoMappedPort := generatedMongo.Config().Port
 	appEnv[testcontainers.MongoHostKey] = "host.docker.internal"
-	appEnv[testcontainers.MongoPortKey] = mongoMappedPort.Port()
+	appEnv[testcontainers.MongoPortKey] = mongoMappedPort
 
 	logger.Info(ctx, "📡 App will connect to MongoDB via host.docker.internal",
-		zap.String("port", mongoMappedPort.Port()))
+		zap.String("port", mongoMappedPort))
 
 	appContainer, err := app.NewContainer(ctx,
 		app.WithName(inventoryAppName),
