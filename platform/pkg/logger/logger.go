@@ -1,12 +1,13 @@
 package logger
 
 import (
-	"context"
-	"go.uber.org/zap"
-	"go.uber.org/zap/zapcore"
-	"os"
-	"strings"
-	"sync"
+    "context"
+    "os"
+    "strings"
+    "sync"
+
+    "go.uber.org/zap"
+    "go.uber.org/zap/zapcore"
 )
 
 type Key string

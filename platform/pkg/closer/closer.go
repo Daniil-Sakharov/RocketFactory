@@ -1,15 +1,16 @@
 package closer
 
 import (
-	"context"
-	"errors"
-	"fmt"
-	"github.com/Daniil-Sakharov/RocketFactory/platform/pkg/logger"
-	"go.uber.org/zap"
-	"os"
-	"os/signal"
-	"sync"
-	"time"
+    "context"
+    "errors"
+    "fmt"
+    "os"
+    "os/signal"
+    "sync"
+    "time"
+
+    "github.com/Daniil-Sakharov/RocketFactory/platform/pkg/logger"
+    "go.uber.org/zap"
 )
 
 const shutdownTimeout = 5 * time.Second
