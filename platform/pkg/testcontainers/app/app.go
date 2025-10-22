@@ -72,7 +72,20 @@ func NewContainer(ctx context.Context, opts ...Option) (*Container, error) {
 		Env:                cfg.Env,
 		WaitingFor:         cfg.StartupWait,
 		ExposedPorts:       []string{cfg.Port + "/tcp"},
-		HostConfigModifier: DefaultHostConfig(),
+		HostConfigModifier: func(hc *container.HostConfig) {
+			// Publish ports to all interfaces to ensure accessibility in CI/CD
+			hc.AutoRemove = false
+			hc.PublishAllPorts = true
+			// Add explicit port binding
+			if hc.PortBindings == nil {
+				hc.PortBindings = nat.PortMap{}
+			}
+			hc.PortBindings[nat.Port(cfg.Port+"/tcp")] = []nat.PortBinding{
+				{
+					HostIP: "0.0.0.0",
+				},
+			}
+		},
 	}
 
 	genericContainer, err := testcontainers.GenericContainer(ctx, testcontainers.GenericContainerRequest{
