@@ -42,9 +42,7 @@ func connectMongoClient(ctx context.Context, uri string) (*mongo.Client, error) 
 		}
 
 		// Если ping не прошел, закрываем клиента и пробуем снова
-		if derr := client.Disconnect(ctx); derr != nil {
-			// nothing to do here; next retry will create a new client
-		}
+        _ = client.Disconnect(ctx) // best-effort; ignore error
 
 		if attempt < maxRetries {
 			// Wait respecting context instead of time.Sleep

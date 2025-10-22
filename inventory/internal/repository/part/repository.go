@@ -1,24 +1,24 @@
 package part
 
 import (
-	"context"
-	"time"
+    "context"
+    "time"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 
-	def "github.com/Daniil-Sakharov/RocketFactory/inventory/internal/repository"
+    def "github.com/Daniil-Sakharov/RocketFactory/inventory/internal/repository"
 )
 
 var _ def.PartRepository = (*repository)(nil)
 
 type repository struct {
-	collection *mongo.Collection
+    collection *mongo.Collection
 }
 
-func NewRepository(db *mongo.Database) *repository {
-	collection := db.Collection("parts")
+func NewRepository(ctx context.Context, db *mongo.Database) *repository {
+    collection := db.Collection("parts")
 
 	indexModel := []mongo.IndexModel{
 		{
@@ -27,7 +27,8 @@ func NewRepository(db *mongo.Database) *repository {
 		},
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+    // Use caller context to respect timeouts/cancellation
+    ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
 	defer cancel()
 
 	_, err := collection.Indexes().CreateMany(ctx, indexModel)
@@ -35,5 +36,5 @@ func NewRepository(db *mongo.Database) *repository {
 		panic(err)
 	}
 
-	return &repository{collection: collection}
+    return &repository{collection: collection}
 }

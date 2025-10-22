@@ -48,7 +48,7 @@ func (d *diContainer) InventoryService(ctx context.Context) service.PartService 
 
 func (d *diContainer) InventoryRepository(ctx context.Context) repository.PartRepository {
 	if d.inventoryRepository == nil {
-		d.inventoryRepository = repoPart.NewRepository(d.MongoDBDatabase(ctx))
+        d.inventoryRepository = repoPart.NewRepository(ctx, d.MongoDBDatabase(ctx))
 	}
 	return d.inventoryRepository
 }
@@ -61,10 +61,10 @@ func (d *diContainer) MongoDBClient(ctx context.Context) *mongo.Client {
 		var client *mongo.Client
 		var err error
 
-		// Пытаемся подключиться 20 раз с интервалом 3 секунды
-		// MongoDB в Docker может инициализироваться до 60 секунд
-		maxRetries := 20
-		retryDelay := 3 * time.Second
+        // Пытаемся подключиться 20 раз с интервалом 3 секунды
+        // Используем таймеры, завязанные на ctx, вместо time.Sleep
+        maxRetries := 20
+        retryDelay := 3 * time.Second
 
 		for attempt := 1; attempt <= maxRetries; attempt++ {
 			client, err = mongo.Connect(ctx, options.Client().ApplyURI(mongoURI))
@@ -87,9 +87,14 @@ func (d *diContainer) MongoDBClient(ctx context.Context) *mongo.Client {
 			_ = client.Disconnect(ctx)
 			client = nil
 
-			if attempt < maxRetries {
-				time.Sleep(retryDelay)
-			}
+            if attempt < maxRetries {
+                timer := time.NewTimer(retryDelay)
+                select {
+                case <-ctx.Done():
+                    timer.Stop()
+                case <-timer.C:
+                }
+            }
 		}
 
 		if err != nil || client == nil {
