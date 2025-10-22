@@ -40,7 +40,8 @@ func waitForPort(ctx context.Context, address string, maxAttempts int, delay tim
 		}
 	}
 
-	return logger.Error(ctx, "Port did not become available",
+	logger.Error(ctx, "Port did not become available",
 		zap.String("address", address),
 		zap.Int("maxAttempts", maxAttempts))
+	return fmt.Errorf("port %s did not become available after %d attempts", address, maxAttempts)
 }
