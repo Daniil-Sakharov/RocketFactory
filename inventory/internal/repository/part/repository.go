@@ -17,7 +17,7 @@ type repository struct {
 	collection *mongo.Collection
 }
 
-func NewRepository(ctx context.Context, db *mongo.Database) *repository {
+func NewRepository(_ context.Context, db *mongo.Database) *repository {
 	collection := db.Collection("parts")
 
 	indexModel := []mongo.IndexModel{
@@ -27,7 +27,8 @@ func NewRepository(ctx context.Context, db *mongo.Database) *repository {
 		},
 	}
 
-	indexCtx, cancel := context.WithTimeout(ctx, 10*time.Second)
+	// Use background context for index creation as it's one-time initialization
+	indexCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
 	_, err := collection.Indexes().CreateMany(indexCtx, indexModel)
