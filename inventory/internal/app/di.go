@@ -47,7 +47,8 @@ func (d *diContainer) InventoryService(ctx context.Context) service.PartService 
 
 func (d *diContainer) InventoryRepository(ctx context.Context) repository.PartRepository {
 	if d.inventoryRepository == nil {
-		d.inventoryRepository = repoPart.NewRepository(d.MongoDBDatabase(ctx))
+		// Repository is a singleton, context is used only for DB initialization
+		d.inventoryRepository = repoPart.NewRepository(d.MongoDBDatabase(ctx)) //nolint:contextcheck
 	}
 	return d.inventoryRepository
 }
