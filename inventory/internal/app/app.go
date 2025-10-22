@@ -118,13 +118,15 @@ func (a *App) initListener(_ context.Context) error {
 
 func (a *App) initGRPCServer(ctx context.Context) error {
 	// Recovery interceptor to catch panics in gRPC handlers
-	recoveryInterceptor := func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
+	recoveryInterceptor := func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp interface{}, err error) {
 		defer func() {
 			if r := recover(); r != nil {
 				logger.Error(ctx, "🔥 PANIC in gRPC handler",
 					zap.String("method", info.FullMethod),
 					zap.Any("panic", r),
 					zap.Stack("stacktrace"))
+				// Return error instead of crashing
+				err = fmt.Errorf("panic in handler %s: %v", info.FullMethod, r)
 			}
 		}()
 		return handler(ctx, req)

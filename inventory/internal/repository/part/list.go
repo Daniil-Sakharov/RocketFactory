@@ -18,9 +18,9 @@ import (
 
 func (r *repository) ListParts(ctx context.Context, filter *model.PartsFilter) ([]*model.Part, error) {
 	logger.Info(ctx, "🔍 ListParts called", zap.Any("filter", filter))
-	
+
 	mongoFilter := bson.M{}
-	
+
 	// Handle nil filter
 	if filter == nil {
 		logger.Info(ctx, "Filter is nil, returning all documents")
