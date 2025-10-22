@@ -28,10 +28,10 @@ func NewRepository(_ context.Context, db *mongo.Database) *repository {
 	}
 
 	// Use background context for index creation as it's one-time initialization
-	//nolint:contextcheck // Background context is intentional for DB index initialization
 	indexCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
+	//nolint:contextcheck // Background context is intentional for DB index initialization
 	_, err := collection.Indexes().CreateMany(indexCtx, indexModel)
 	if err != nil {
 		panic(err)
