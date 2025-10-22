@@ -22,6 +22,10 @@ packages:
     config:
       include-regex: ".*(Client)"
 
+  github.com/Daniil-Sakharov/RocketFactory/order/internal/config:
+    config:
+      include-regex: ".*(Config)"
+
   # Payment Service
   github.com/Daniil-Sakharov/RocketFactory/payment/internal/service:
     config:

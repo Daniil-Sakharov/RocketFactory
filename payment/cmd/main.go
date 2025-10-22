@@ -1,64 +1,53 @@
 package main
 
 import (
+	"context"
 	"fmt"
-	"log"
-	"net"
-	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/reflection"
+	"go.uber.org/zap"
 
-	apiv1 "github.com/Daniil-Sakharov/RocketFactory/payment/internal/api/payment/v1"
-	paymentService "github.com/Daniil-Sakharov/RocketFactory/payment/internal/service/payment"
-	paymentv1 "github.com/Daniil-Sakharov/RocketFactory/shared/pkg/proto/payment/v1"
+	"github.com/Daniil-Sakharov/RocketFactory/payment/internal/app"
+	"github.com/Daniil-Sakharov/RocketFactory/payment/internal/config"
+	"github.com/Daniil-Sakharov/RocketFactory/platform/pkg/closer"
+	"github.com/Daniil-Sakharov/RocketFactory/platform/pkg/logger"
 )
 
-const grpcPort = 50052
-
 func main() {
-	// Создаем TCP listener
-	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", grpcPort))
+	// .env файл опционален:
+	// - В локальной разработке: загружается из корня проекта или указанного пути
+	// - В Docker: переменные передаются через environment (-e флаги)
+	err := config.Load()
 	if err != nil {
-		log.Fatalf("Ошибка слушания tcp соединения на порту %d: %v\n", grpcPort, err)
+		panic(fmt.Errorf("error to load config: %w", err))
 	}
-	defer func() {
-		if err := lis.Close(); err != nil {
-			log.Printf("Ошибка закрытия tcp соединения на порту %d: %v\n", grpcPort, err)
-		}
-	}()
 
-	// Создаем Service слой
-	service := paymentService.New()
+	appCtx, appCancel := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
+	defer appCancel()
+	defer gracefulShutdown()
 
-	// Создаем API слой
-	api := apiv1.New(service)
+	closer.Configure(syscall.SIGINT, syscall.SIGTERM)
 
-	// Создаем gRPC сервер
-	grpcServer := grpc.NewServer()
+	a, err := app.New(appCtx)
+	if err != nil {
+		logger.Error(appCtx, "❌ Не удалось создать приложение", zap.Error(err))
+		return
+	}
 
-	// Регистрируем API
-	paymentv1.RegisterPaymentServiceServer(grpcServer, api)
+	err = a.Run(appCtx)
+	if err != nil {
+		logger.Error(appCtx, "❌ Ошибка при работе приложения", zap.Error(err))
+		return
+	}
+}
 
-	// Включаем рефлексию для grpcurl
-	reflection.Register(grpcServer)
+func gracefulShutdown() {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 
-	// Запускаем сервер в горутине
-	go func() {
-		log.Printf("🚀 PaymentService gRPC server listening on port %d\n", grpcPort)
-		if err := grpcServer.Serve(lis); err != nil {
-			log.Fatalf("Failed to serve: %v\n", err)
-		}
-	}()
-
-	// Graceful shutdown
-	quit := make(chan os.Signal, 1)
-	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
-	<-quit
-
-	log.Println("🛑 Shutting down PaymentService gRPC server...")
-	grpcServer.GracefulStop()
-	log.Println("✅ PaymentService stopped")
+	if err := closer.CloseAll(ctx); err != nil {
+		logger.Error(ctx, "❌ Ошибка при завершении работы", zap.Error(err))
+	}
 }

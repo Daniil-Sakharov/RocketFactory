@@ -1,7 +1,7 @@
 {
   "name": "rocketfactory",
   "version": "1.0.0",
-  "description": "Этот репозиторий содержит проект из курса [Микросервисы, как в BigTech 2.0](https://olezhek28.courses/microservices) от [Олега Козырева](http://t.me/olezhek28go).",
+  "description": "Этот репозиторий содержит проект Rocket Factory",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
