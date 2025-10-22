@@ -70,7 +70,15 @@ func (d *diContainer) MongoDBClient(ctx context.Context) *mongo.Client {
 			client, err = mongo.Connect(ctx, options.Client().ApplyURI(mongoURI))
 			if err != nil {
 				logger.Warn(ctx, fmt.Sprintf("Failed to connect to MongoDB (attempt %d/%d): %v", attempt, maxRetries, err))
-				time.Sleep(retryDelay)
+				if attempt < maxRetries {
+					timer := time.NewTimer(retryDelay)
+					select {
+					case <-timer.C:
+					case <-ctx.Done():
+						timer.Stop()
+						return nil
+					}
+				}
 				continue
 			}
 
@@ -84,11 +92,19 @@ func (d *diContainer) MongoDBClient(ctx context.Context) *mongo.Client {
 			logger.Warn(ctx, fmt.Sprintf("Failed to ping MongoDB (attempt %d/%d): %v", attempt, maxRetries, err))
 
 			// Закрываем неудачное соединение
-			_ = client.Disconnect(ctx)
+			if disconnectErr := client.Disconnect(ctx); disconnectErr != nil {
+				logger.Warn(ctx, "Failed to disconnect from MongoDB after failed ping", zap.Error(disconnectErr))
+			}
 			client = nil
 
 			if attempt < maxRetries {
-				time.Sleep(retryDelay)
+				timer := time.NewTimer(retryDelay)
+				select {
+				case <-timer.C:
+				case <-ctx.Done():
+					timer.Stop()
+					return nil
+				}
 			}
 		}
 

@@ -4,12 +4,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/Daniil-Sakharov/RocketFactory/platform/pkg/logger"
-	"go.uber.org/zap"
 	"os"
 	"os/signal"
 	"sync"
 	"time"
+
+	"github.com/Daniil-Sakharov/RocketFactory/platform/pkg/logger"
+	"go.uber.org/zap"
 )
 
 const shutdownTimeout = 5 * time.Second
@@ -95,6 +96,7 @@ func (c *Closer) handleSignals(signals ...os.Signal) {
 
 	}
 }
+
 func (c *Closer) AddNamed(name string, f func(context.Context) error) {
 	c.Add(func(ctx context.Context) error {
 		start := time.Now()

@@ -5,9 +5,9 @@ import (
 	"net/http"
 )
 
-type Config struct{
+type Config struct {
 	ServiceName string
-	Version string
+	Version     string
 }
 
 func NewHandler(cfg Config) http.HandlerFunc {

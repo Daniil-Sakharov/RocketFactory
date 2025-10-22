@@ -1,8 +1,10 @@
 //go:build integration
+
 package integration
 
 import (
 	"context"
+
 	"github.com/Daniil-Sakharov/RocketFactory/platform/pkg/logger"
 	"go.uber.org/zap"
 )

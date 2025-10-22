@@ -3,6 +3,7 @@ package app
 import (
 	"context"
 	"fmt"
+
 	orderAPI "github.com/Daniil-Sakharov/RocketFactory/order/internal/api/order/v1"
 	grpcClient "github.com/Daniil-Sakharov/RocketFactory/order/internal/client/grpc"
 	inventoryClient "github.com/Daniil-Sakharov/RocketFactory/order/internal/client/grpc/inventory/v1"

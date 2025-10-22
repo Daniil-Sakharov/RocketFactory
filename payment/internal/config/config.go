@@ -29,7 +29,7 @@ func Load(path ...string) error {
 
 	appConfig = &config{
 		Payment: paymentCfg,
-		Logger: loggerCfg,
+		Logger:  loggerCfg,
 	}
 
 	return nil
