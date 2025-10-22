@@ -14,6 +14,7 @@ import (
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"go.uber.org/zap"
+    "os/exec"
 
 	"github.com/Daniil-Sakharov/RocketFactory/platform/pkg/logger"
 )
@@ -39,6 +40,13 @@ var _ = BeforeSuite(func() {
 	}
 
 	suiteCtx, suiteCancel = context.WithTimeout(context.Background(), testsTimeout)
+
+    // Готовим окружение Docker для testcontainers и проверяем доступность Docker
+    ensureDockerEnv()
+    if !isDockerAvailable(suiteCtx) {
+        Skip("Docker недоступен в окружении CI — пропускаем интеграционные тесты")
+        return
+    }
 
     // Загружаем .env файл и устанавливаем переменные в окружение
     envPath := filepath.Join("..", "..", "..", "deploy", "compose", "inventory", ".env")
@@ -78,3 +86,30 @@ var _ = AfterSuite(func() {
 	}
 	suiteCancel()
 })
+
+// ensureDockerEnv настраивает переменные окружения для testcontainers в CI
+func ensureDockerEnv() {
+    // Отключаем Ryuk (reaper) и reuse по умолчанию — безопаснее для CI
+    setDefaultEnvIfEmpty("TESTCONTAINERS_RYUK_DISABLED", "true")
+    setDefaultEnvIfEmpty("TESTCONTAINERS_REUSE_ENABLE", "false")
+}
+
+func isDockerAvailable(ctx context.Context) bool {
+    // Проверяем, что установлен docker и доступен демон
+    if _, err := exec.LookPath("docker"); err != nil {
+        logger.Warn(ctx, "docker binary not found in PATH")
+        return false
+    }
+    cmd := exec.Command("docker", "version", "--format", "{{.Server.Version}}")
+    if err := cmd.Run(); err != nil {
+        logger.Warn(ctx, "docker daemon is not available")
+        return false
+    }
+    return true
+}
+
+func setDefaultEnvIfEmpty(key, value string) {
+    if os.Getenv(key) == "" {
+        _ = os.Setenv(key, value)
+    }
+}
