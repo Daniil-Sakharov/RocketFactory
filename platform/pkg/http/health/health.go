@@ -19,6 +19,9 @@ func NewHandler(cfg Config) http.HandlerFunc {
 		}
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		_ = json.NewEncoder(w).Encode(response)
+		if err := json.NewEncoder(w).Encode(response); err != nil {
+			// Response already started, can't change status code
+			// Just log the error (in production, use proper logger)
+		}
 	}
 }

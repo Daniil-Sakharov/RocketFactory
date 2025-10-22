@@ -8,6 +8,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
+	"go.uber.org/zap"
 
 	apiPart "github.com/Daniil-Sakharov/RocketFactory/inventory/internal/api/inventory/v1"
 	"github.com/Daniil-Sakharov/RocketFactory/inventory/internal/config"

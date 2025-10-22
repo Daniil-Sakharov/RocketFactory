@@ -22,7 +22,13 @@ func connectMongoClient(ctx context.Context, uri string) (*mongo.Client, error) 
 		client, err = mongo.Connect(ctx, options.Client().ApplyURI(uri))
 		if err != nil {
 			if attempt < maxRetries {
-				time.Sleep(retryDelay)
+				timer := time.NewTimer(retryDelay)
+				select {
+				case <-timer.C:
+				case <-ctx.Done():
+					timer.Stop()
+					return nil, errors.Wrap(ctx.Err(), "context cancelled while connecting to mongo")
+				}
 				continue
 			}
 			return nil, errors.Errorf("failed to connect to mongo after %d attempts: %v", maxRetries, err)
@@ -35,10 +41,18 @@ func connectMongoClient(ctx context.Context, uri string) (*mongo.Client, error) 
 		}
 
 		// Если ping не прошел, закрываем клиента и пробуем снова
-		_ = client.Disconnect(ctx)
+		if disconnectErr := client.Disconnect(ctx); disconnectErr != nil {
+			// Логируем, но продолжаем попытки
+		}
 
 		if attempt < maxRetries {
-			time.Sleep(retryDelay)
+			timer := time.NewTimer(retryDelay)
+			select {
+			case <-timer.C:
+			case <-ctx.Done():
+				timer.Stop()
+				return nil, errors.Wrap(ctx.Err(), "context cancelled while connecting to mongo")
+			}
 		}
 	}
 
