@@ -117,7 +117,22 @@ func (a *App) initListener(_ context.Context) error {
 }
 
 func (a *App) initGRPCServer(ctx context.Context) error {
-	a.grpcServer = grpc.NewServer(grpc.Creds(insecure.NewCredentials()))
+	// Add logging interceptor for debugging
+	loggingInterceptor := func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
+		logger.Info(ctx, "📥 Received gRPC request", zap.String("method", info.FullMethod))
+		resp, err := handler(ctx, req)
+		if err != nil {
+			logger.Error(ctx, "❌ gRPC request failed", zap.String("method", info.FullMethod), zap.Error(err))
+		} else {
+			logger.Info(ctx, "✅ gRPC request successful", zap.String("method", info.FullMethod))
+		}
+		return resp, err
+	}
+
+	a.grpcServer = grpc.NewServer(
+		grpc.Creds(insecure.NewCredentials()),
+		grpc.UnaryInterceptor(loggingInterceptor),
+	)
 	closer.AddNamed("gRPC server", func(ctx context.Context) error {
 		a.grpcServer.GracefulStop()
 		return nil
