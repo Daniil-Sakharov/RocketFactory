@@ -68,10 +68,10 @@ func NewContainer(ctx context.Context, opts ...Option) (*Container, error) {
 			Dockerfile:     cfg.Dockerfile,
 			BuildLogWriter: cfg.LogOutput,
 		},
-		Networks:           cfg.Networks,
-		Env:                cfg.Env,
-		WaitingFor:         cfg.StartupWait,
-		ExposedPorts:       []string{cfg.Port + "/tcp"},
+		Networks:     cfg.Networks,
+		Env:          cfg.Env,
+		WaitingFor:   cfg.StartupWait,
+		ExposedPorts: []string{cfg.Port + "/tcp"},
 		HostConfigModifier: func(hc *container.HostConfig) {
 			// Publish ports to all interfaces to ensure accessibility in CI/CD
 			hc.AutoRemove = false
