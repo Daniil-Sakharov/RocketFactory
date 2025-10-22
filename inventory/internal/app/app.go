@@ -117,7 +117,23 @@ func (a *App) initListener(_ context.Context) error {
 }
 
 func (a *App) initGRPCServer(ctx context.Context) error {
-	a.grpcServer = grpc.NewServer(grpc.Creds(insecure.NewCredentials()))
+	// Recovery interceptor to catch panics in gRPC handlers
+	recoveryInterceptor := func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
+		defer func() {
+			if r := recover(); r != nil {
+				logger.Error(ctx, "🔥 PANIC in gRPC handler",
+					zap.String("method", info.FullMethod),
+					zap.Any("panic", r),
+					zap.Stack("stacktrace"))
+			}
+		}()
+		return handler(ctx, req)
+	}
+
+	a.grpcServer = grpc.NewServer(
+		grpc.Creds(insecure.NewCredentials()),
+		grpc.UnaryInterceptor(recoveryInterceptor),
+	)
 	closer.AddNamed("gRPC server", func(ctx context.Context) error {
 		a.grpcServer.GracefulStop()
 		return nil
