@@ -4,6 +4,7 @@ package integration
 
 import (
 	"context"
+	"strings"
 	"time"
 
 	. "github.com/onsi/ginkgo/v2"
@@ -13,6 +14,16 @@ import (
 
 	inventoryV1 "github.com/Daniil-Sakharov/RocketFactory/shared/pkg/proto/inventory/v1"
 )
+
+func isConnectionError(err error) bool {
+	if err == nil {
+		return false
+	}
+	errStr := err.Error()
+	return strings.Contains(errStr, "connection refused") ||
+		strings.Contains(errStr, "Unavailable") ||
+		strings.Contains(errStr, "transport")
+}
 
 var _ = Describe("InventoryService", func() {
 	var (
