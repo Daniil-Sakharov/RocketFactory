@@ -114,6 +114,11 @@ func setupTestEnvironment(ctx context.Context) *TestEnvironment {
 	}
 	logger.Info(ctx, "✅ Контейнер приложения успешно запущен")
 
+	// Дополнительное время для стабилизации mapped port
+	// testcontainers проверяет порт внутри контейнера, но mapped port снаружи может быть не ready
+	logger.Info(ctx, "⏳ Ожидание готовности mapped port...")
+	time.Sleep(5 * time.Second)
+
 	logger.Info(ctx, "🎉 Тестовое окружение готово")
 	return &TestEnvironment{
 		Network: generatedNetwork,
