@@ -5,6 +5,10 @@ import (
 	"fmt"
 	"time"
 
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/mongo/readpref"
+
 	apiPart "github.com/Daniil-Sakharov/RocketFactory/inventory/internal/api/inventory/v1"
 	"github.com/Daniil-Sakharov/RocketFactory/inventory/internal/config"
 	"github.com/Daniil-Sakharov/RocketFactory/inventory/internal/repository"
@@ -14,9 +18,6 @@ import (
 	"github.com/Daniil-Sakharov/RocketFactory/platform/pkg/closer"
 	"github.com/Daniil-Sakharov/RocketFactory/platform/pkg/logger"
 	inventoryv1 "github.com/Daniil-Sakharov/RocketFactory/shared/pkg/proto/inventory/v1"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
-	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
 type diContainer struct {
@@ -69,7 +70,15 @@ func (d *diContainer) MongoDBClient(ctx context.Context) *mongo.Client {
 			client, err = mongo.Connect(ctx, options.Client().ApplyURI(mongoURI))
 			if err != nil {
 				logger.Warn(ctx, fmt.Sprintf("Failed to connect to MongoDB (attempt %d/%d): %v", attempt, maxRetries, err))
-				time.Sleep(retryDelay)
+				if attempt < maxRetries {
+					timer := time.NewTimer(retryDelay)
+					select {
+					case <-timer.C:
+					case <-ctx.Done():
+						timer.Stop()
+						panic(fmt.Sprintf("context cancelled while connecting to MongoDB: %v", ctx.Err()))
+					}
+				}
 				continue
 			}
 
@@ -87,7 +96,13 @@ func (d *diContainer) MongoDBClient(ctx context.Context) *mongo.Client {
 			client = nil
 
 			if attempt < maxRetries {
-				time.Sleep(retryDelay)
+				timer := time.NewTimer(retryDelay)
+				select {
+				case <-timer.C:
+				case <-ctx.Done():
+					timer.Stop()
+					panic(fmt.Sprintf("context cancelled while connecting to MongoDB: %v", ctx.Err()))
+				}
 			}
 		}
 
