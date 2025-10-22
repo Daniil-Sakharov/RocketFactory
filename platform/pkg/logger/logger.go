@@ -2,11 +2,12 @@ package logger
 
 import (
 	"context"
-	"go.uber.org/zap"
-	"go.uber.org/zap/zapcore"
 	"os"
 	"strings"
 	"sync"
+
+	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 )
 
 type Key string
@@ -123,7 +124,8 @@ func WithContext(ctx context.Context) *logger {
 		return &logger{zapLogger: zap.NewNop()}
 	}
 
-	return &logger{zapLogger: globalLogger.zapLogger.With(fieldsFromContext(ctx)...),
+	return &logger{
+		zapLogger: globalLogger.zapLogger.With(fieldsFromContext(ctx)...),
 	}
 }
 
@@ -161,7 +163,6 @@ func Fatal(ctx context.Context, msg string, fields ...zap.Field) {
 	}
 	globalLogger.Fatal(ctx, msg, fields...)
 }
-
 
 func (l *logger) Debug(ctx context.Context, msg string, fields ...zap.Field) {
 	allFields := append(fieldsFromContext(ctx), fields...)

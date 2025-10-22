@@ -22,7 +22,7 @@ func connectMongoClient(ctx context.Context, uri string) (*mongo.Client, error) 
 		client, err = mongo.Connect(ctx, options.Client().ApplyURI(uri))
 		if err != nil {
 			if attempt < maxRetries {
-				time.Sleep(retryDelay)
+				time.Sleep(retryDelay) //nolint:forbidigo // Допустимо для testcontainers - ждем инициализации MongoDB
 				continue
 			}
 			return nil, errors.Errorf("failed to connect to mongo after %d attempts: %v", maxRetries, err)
@@ -35,10 +35,10 @@ func connectMongoClient(ctx context.Context, uri string) (*mongo.Client, error) 
 		}
 
 		// Если ping не прошел, закрываем клиента и пробуем снова
-		_ = client.Disconnect(ctx)
+		_ = client.Disconnect(ctx) //nolint:gosec // Ошибка disconnect не критична при retry
 
 		if attempt < maxRetries {
-			time.Sleep(retryDelay)
+			time.Sleep(retryDelay) //nolint:forbidigo // Допустимо для testcontainers - ждем инициализации MongoDB
 		}
 	}
 
