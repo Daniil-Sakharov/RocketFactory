@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
 	"os/signal"
 	"syscall"
 	"time"
@@ -18,7 +19,7 @@ func main() {
 	// Перехватываем панику для отладки
 	defer func() {
 		if r := recover(); r != nil {
-			fmt.Printf("🔥 PANIC: %v\n", r)
+			log.Printf("🔥 PANIC: %v\n", r)
 			panic(r) // Повторно бросаем панику
 		}
 	}()
@@ -28,10 +29,9 @@ func main() {
 	// - В Docker: переменные передаются через environment (-e флаги)
 	err := config.Load()
 	if err != nil {
-		fmt.Printf("❌ Failed to load config: %v\n", err)
+		log.Printf("❌ Failed to load config: %v\n", err)
 		panic(fmt.Errorf("error to load config: %w", err))
 	}
-	fmt.Println("✅ Config loaded")
 
 	appCtx, appCancel := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer appCancel()
@@ -39,25 +39,17 @@ func main() {
 
 	closer.Configure(syscall.SIGINT, syscall.SIGTERM)
 
-	fmt.Println("🏗️ Creating application...")
 	a, err := app.New(appCtx)
 	if err != nil {
-		fmt.Printf("❌ Failed to create app: %v\n", err)
-		logger.Error(appCtx, "❌ Не удалось создать приложение", zap.Error(err))
+		logger.Error(appCtx, "Не удалось создать приложение", zap.Error(err))
 		return
 	}
-	fmt.Println("✅ Application created")
 
-	fmt.Println("🚀 Running application...")
 	err = a.Run(appCtx)
 	if err != nil {
-		fmt.Printf("❌ App.Run() returned error: %v\n", err)
-		logger.Error(appCtx, "❌ Ошибка при работе приложения", zap.Error(err))
+		logger.Error(appCtx, "Ошибка при работе приложения", zap.Error(err))
 		return
 	}
-
-	fmt.Println("👋 Application exited normally")
-
 }
 
 func gracefulShutdown() {
