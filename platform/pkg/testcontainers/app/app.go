@@ -93,6 +93,11 @@ func NewContainer(ctx context.Context, opts ...Option) (*Container, error) {
 		return nil, errors.Errorf("failed to get genericContainer externalHost: %v", err)
 	}
 
+	// Force IPv4 to avoid issues with testcontainers using localhost which may resolve to IPv6
+	if host == "localhost" {
+		host = "127.0.0.1"
+	}
+
 	// Запускаем стриминг логов сразу в отдельной горутине
 	go func() {
 		logs, err := genericContainer.Logs(ctx)
