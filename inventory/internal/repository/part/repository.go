@@ -33,7 +33,7 @@ func NewRepository(_ context.Context, db *mongo.Database) *repository {
 	defer cancel()
 
 	// Create indexes - if they already exist, MongoDB will silently skip
-	//nolint:gosec // Ignoring error is intentional - indexes might already exist
+	//nolint:gosec,contextcheck // Ignoring error & using background context is intentional
 	_, _ = collection.Indexes().CreateMany(indexCtx, indexModel)
 
 	return &repository{collection: collection}
