@@ -48,7 +48,7 @@ func (d *diContainer) InventoryService(ctx context.Context) service.PartService 
 
 func (d *diContainer) InventoryRepository(ctx context.Context) repository.PartRepository {
 	if d.inventoryRepository == nil {
-        d.inventoryRepository = repoPart.NewRepository(ctx, d.MongoDBDatabase(ctx))
+		d.inventoryRepository = repoPart.NewRepository(ctx, d.MongoDBDatabase(ctx))
 	}
 	return d.inventoryRepository
 }
@@ -61,16 +61,23 @@ func (d *diContainer) MongoDBClient(ctx context.Context) *mongo.Client {
 		var client *mongo.Client
 		var err error
 
-        // Пытаемся подключиться 20 раз с интервалом 3 секунды
-        // Используем таймеры, завязанные на ctx, вместо time.Sleep
-        maxRetries := 20
-        retryDelay := 3 * time.Second
+		// Пытаемся подключиться 20 раз с интервалом 3 секунды
+		// Используем таймеры, завязанные на ctx, вместо time.Sleep
+		maxRetries := 20
+		retryDelay := 3 * time.Second
 
 		for attempt := 1; attempt <= maxRetries; attempt++ {
 			client, err = mongo.Connect(ctx, options.Client().ApplyURI(mongoURI))
 			if err != nil {
 				logger.Warn(ctx, fmt.Sprintf("Failed to connect to MongoDB (attempt %d/%d): %v", attempt, maxRetries, err))
-				time.Sleep(retryDelay)
+				// Wait respecting context instead of time.Sleep
+				timer := time.NewTimer(retryDelay)
+				select {
+				case <-ctx.Done():
+					timer.Stop()
+					break
+				case <-timer.C:
+				}
 				continue
 			}
 
@@ -84,17 +91,19 @@ func (d *diContainer) MongoDBClient(ctx context.Context) *mongo.Client {
 			logger.Warn(ctx, fmt.Sprintf("Failed to ping MongoDB (attempt %d/%d): %v", attempt, maxRetries, err))
 
 			// Закрываем неудачное соединение
-			_ = client.Disconnect(ctx)
+			if derr := client.Disconnect(ctx); derr != nil {
+				logger.Warn(ctx, "failed to disconnect mongo client after failed ping", zap.Error(derr))
+			}
 			client = nil
 
-            if attempt < maxRetries {
-                timer := time.NewTimer(retryDelay)
-                select {
-                case <-ctx.Done():
-                    timer.Stop()
-                case <-timer.C:
-                }
-            }
+			if attempt < maxRetries {
+				timer := time.NewTimer(retryDelay)
+				select {
+				case <-ctx.Done():
+					timer.Stop()
+				case <-timer.C:
+				}
+			}
 		}
 
 		if err != nil || client == nil {

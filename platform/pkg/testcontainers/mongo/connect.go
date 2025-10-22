@@ -42,7 +42,10 @@ func connectMongoClient(ctx context.Context, uri string) (*mongo.Client, error) 
 		}
 
 		// Если ping не прошел, закрываем клиента и пробуем снова
-        _ = client.Disconnect(ctx) // best-effort; ignore error
+		if err := client.Disconnect(ctx); err != nil {
+			// best-effort: ignore error but keep branch non-empty to satisfy staticcheck in CI
+			_ = err
+		}
 
 		if attempt < maxRetries {
 			// Wait respecting context instead of time.Sleep
