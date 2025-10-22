@@ -18,23 +18,27 @@ var _ = Describe("InventoryService", func() {
 		ctx             context.Context
 		cancel          context.CancelFunc
 		inventoryClient inventoryV1.InventoryServiceClient
+		grpcConn        *grpc.ClientConn
 	)
 
 	BeforeEach(func() {
 		ctx, cancel = context.WithCancel(suiteCtx)
 
-		// Создаём gRPC клиент
+		// Создаём gRPC клиент только один раз (переиспользуем соединение)
 		// Port availability уже проверен в setupTestEnvironment через waitForPort
-		GinkgoWriter.Printf("🔌 Подключение к gRPC серверу по адресу: %s\n", env.App.Address())
-		
-		conn, err := grpc.NewClient(
-			env.App.Address(),
-			grpc.WithTransportCredentials(insecure.NewCredentials()),
-		)
-		Expect(err).ToNot(HaveOccurred(), "ожидали успешное подключение к gRPC приложению")
-		GinkgoWriter.Println("✅ gRPC клиент создан успешно")
+		if grpcConn == nil {
+			GinkgoWriter.Printf("🔌 Подключение к gRPC серверу по адресу: %s\n", env.App.Address())
+			
+			var err error
+			grpcConn, err = grpc.NewClient(
+				env.App.Address(),
+				grpc.WithTransportCredentials(insecure.NewCredentials()),
+			)
+			Expect(err).ToNot(HaveOccurred(), "ожидали успешное подключение к gRPC приложению")
+			GinkgoWriter.Println("✅ gRPC клиент создан успешно")
+		}
 
-		inventoryClient = inventoryV1.NewInventoryServiceClient(conn)
+		inventoryClient = inventoryV1.NewInventoryServiceClient(grpcConn)
 		GinkgoWriter.Println("✅ InventoryServiceClient инициализирован")
 	})
 
