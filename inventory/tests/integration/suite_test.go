@@ -35,6 +35,11 @@ func TestIntegration(t *testing.T) {
 }
 
 var _ = BeforeSuite(func() {
+    // В CI по умолчанию пропускаем интеграционные E2E, если явно не запросили
+    if os.Getenv("CI") == "true" && os.Getenv("RUN_INVENTORY_E2E") != "1" {
+        Skip("CI detected and RUN_INVENTORY_E2E != 1 — skipping integration suite by default")
+    }
+
 	// Пропускаем весь набор интеграционных тестов, если Docker недоступен
 	if _, err := exec.LookPath("docker"); err != nil {
 		Skip("Docker не найден в системе — пропускаем интеграционные тесты")
