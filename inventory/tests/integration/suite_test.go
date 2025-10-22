@@ -40,11 +40,27 @@ var _ = BeforeSuite(func() {
 
 	suiteCtx, suiteCancel = context.WithTimeout(context.Background(), testsTimeout)
 
-	// Загружаем .env файл и устанавливаем переменные в окружение
-	envVars, err := godotenv.Read(filepath.Join("..", "..", "..", "deploy", "compose", "inventory", ".env"))
-	if err != nil {
-		logger.Fatal(suiteCtx, "Не удалось загрузить .env файл", zap.Error(err))
-	}
+    // Загружаем .env файл и устанавливаем переменные в окружение
+    envPath := filepath.Join("..", "..", "..", "deploy", "compose", "inventory", ".env")
+    envVars, err := godotenv.Read(envPath)
+    if err != nil {
+        // В CI/CD файл может отсутствовать — используем безопасные дефолтные значения
+        logger.Warn(suiteCtx, "Файл .env не найден, используем значения по умолчанию для тестов",
+            zap.String("path", envPath), zap.Error(err))
+        envVars = map[string]string{
+            // Настройки MongoDB для контейнера
+            "MONGO_IMAGE_NAME":             "mongo:8.0",
+            "MONGO_INITDB_ROOT_USERNAME":   "inventory-user",
+            "MONGO_INITDB_ROOT_PASSWORD":   "inventory-password",
+            "MONGO_DATABASE":               "inventory-service",
+            "MONGO_AUTH_DB":                "admin",
+            // Порт gRPC приложения внутри контейнера (host мапится автоматически)
+            "GRPC_PORT":                    "50051",
+            // Логгер
+            "LOGGER_LEVEL":                 loggerLevelValue,
+            "LOGGER_AS_JSON":               "true",
+        }
+    }
 
 	// Устанавливаем переменные в окружение процесса
 	for key, value := range envVars {
