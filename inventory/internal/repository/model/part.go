@@ -40,7 +40,8 @@ type Manufacturer struct {
 }
 
 type Part struct {
-	ID primitive.ObjectID `bson:"_id,omitempty"`
+	// MongoDB document ID - using string to support UUID format
+	ID string `bson:"_id,omitempty"`
 	// Уникальный идентификатор детали
 	Uuid string `bson:"uuid"`
 	// Название детали
