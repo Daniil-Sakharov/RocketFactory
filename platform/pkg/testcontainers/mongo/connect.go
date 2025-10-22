@@ -1,3 +1,4 @@
+//nolint:forbidigo // time.Sleep is acceptable in test infrastructure setup code
 package mongo
 
 import (
@@ -35,7 +36,7 @@ func connectMongoClient(ctx context.Context, uri string) (*mongo.Client, error) 
 		}
 
 		// Если ping не прошел, закрываем клиента и пробуем снова
-		_ = client.Disconnect(ctx)
+		_ = client.Disconnect(ctx) //nolint:gosec // Error can be safely ignored in test setup retry loop
 
 		if attempt < maxRetries {
 			time.Sleep(retryDelay)

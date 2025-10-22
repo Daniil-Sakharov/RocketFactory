@@ -19,6 +19,6 @@ func NewHandler(cfg Config) http.HandlerFunc {
 		}
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		_ = json.NewEncoder(w).Encode(response)
+		_ = json.NewEncoder(w).Encode(response) //nolint:gosec // Error in health endpoint response is not critical
 	}
 }
