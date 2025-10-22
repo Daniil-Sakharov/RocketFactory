@@ -69,7 +69,8 @@ func (_c *InventoryGRPCConfig_Address_Call) RunAndReturn(run func() string) *Inv
 func NewInventoryGRPCConfig(t interface {
 	mock.TestingT
 	Cleanup(func())
-}) *InventoryGRPCConfig {
+},
+) *InventoryGRPCConfig {
 	mock := &InventoryGRPCConfig{}
 	mock.Mock.Test(t)
 

@@ -6,13 +6,14 @@ import (
 	"net"
 	"time"
 
-	"github.com/Daniil-Sakharov/RocketFactory/platform/pkg/logger"
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/go-connections/nat"
 	"github.com/pkg/errors"
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/wait"
 	"go.uber.org/zap"
+
+	"github.com/Daniil-Sakharov/RocketFactory/platform/pkg/logger"
 )
 
 const (

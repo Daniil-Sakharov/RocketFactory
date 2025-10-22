@@ -69,7 +69,8 @@ func (_c *PaymentGRPCConfig_Address_Call) RunAndReturn(run func() string) *Payme
 func NewPaymentGRPCConfig(t interface {
 	mock.TestingT
 	Cleanup(func())
-}) *PaymentGRPCConfig {
+},
+) *PaymentGRPCConfig {
 	mock := &PaymentGRPCConfig{}
 	mock.Mock.Test(t)
 

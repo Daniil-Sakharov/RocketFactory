@@ -1,9 +1,11 @@
 package config
 
 import (
-	"github.com/Daniil-Sakharov/RocketFactory/order/internal/config/env"
-	"github.com/joho/godotenv"
 	"os"
+
+	"github.com/joho/godotenv"
+
+	"github.com/Daniil-Sakharov/RocketFactory/order/internal/config/env"
 )
 
 var appConfig *config
@@ -12,8 +14,8 @@ type config struct {
 	Logger        LoggerConfig
 	OrderHTTP     OrderHTTPConfig
 	InventoryGRPC InventoryGRPCConfig
-	PaymentGRPC PaymentGRPCConfig
-	PostgresDB  PostgresConfig
+	PaymentGRPC   PaymentGRPCConfig
+	PostgresDB    PostgresConfig
 }
 
 func Load(path ...string) error {

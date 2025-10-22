@@ -1,17 +1,18 @@
 package env
 
 import (
-	"github.com/caarlos0/env/v11"
 	"net"
 	"time"
+
+	"github.com/caarlos0/env/v11"
 )
 
 type orderHTTPEnvConfig struct {
-	Host        string        `env:"HTTP_HOST,required"`
-	Port        string        `env:"HTTP_PORT,required"`
-	ReadTimeout time.Duration `env:"HTTP_READ_TIMEOUT" envDefault:"15s"`
+	Host         string        `env:"HTTP_HOST,required"`
+	Port         string        `env:"HTTP_PORT,required"`
+	ReadTimeout  time.Duration `env:"HTTP_READ_TIMEOUT" envDefault:"15s"`
 	WriteTimeout time.Duration `env:"HTTP_WRITE_TIMEOUT" envDefault:"15s"`
-	IdleTimeout time.Duration   `env:"HTTP_IDLE_TIMEOUT" envDefault:"60s"`
+	IdleTimeout  time.Duration `env:"HTTP_IDLE_TIMEOUT" envDefault:"60s"`
 }
 
 type orderHTTPConfig struct {

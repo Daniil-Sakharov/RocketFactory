@@ -2,7 +2,7 @@ package testcontainers
 
 const (
 	MongoContainerName = "mongo"
-	MongoPort = "27017"
+	MongoPort          = "27017"
 
 	MongoImageNameKey = "MONGO_IMAGE_NAME"
 	MongoHostKey      = "MONGO_HOST"

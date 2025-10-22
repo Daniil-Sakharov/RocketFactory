@@ -4,9 +4,10 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/Daniil-Sakharov/RocketFactory/platform/pkg/logger"
 	"github.com/docker/docker/api/types/container"
 	"go.uber.org/zap"
+
+	"github.com/Daniil-Sakharov/RocketFactory/platform/pkg/logger"
 )
 
 type Logger interface {

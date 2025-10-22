@@ -159,7 +159,8 @@ func (_c *PostgresConfig_URI_Call) RunAndReturn(run func() string) *PostgresConf
 func NewPostgresConfig(t interface {
 	mock.TestingT
 	Cleanup(func())
-}) *PostgresConfig {
+},
+) *PostgresConfig {
 	mock := &PostgresConfig{}
 	mock.Mock.Test(t)
 

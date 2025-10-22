@@ -87,6 +87,7 @@ type UnimplementedInventoryServiceServer struct{}
 func (UnimplementedInventoryServiceServer) GetPart(context.Context, *GetPartRequest) (*GetPartResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetPart not implemented")
 }
+
 func (UnimplementedInventoryServiceServer) ListParts(context.Context, *ListPartsRequest) (*ListPartsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListParts not implemented")
 }

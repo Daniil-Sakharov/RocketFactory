@@ -208,7 +208,8 @@ func (_c *OrderHTTPConfig_WriteTimeout_Call) RunAndReturn(run func() time.Durati
 func NewOrderHTTPConfig(t interface {
 	mock.TestingT
 	Cleanup(func())
-}) *OrderHTTPConfig {
+},
+) *OrderHTTPConfig {
 	mock := &OrderHTTPConfig{}
 	mock.Mock.Test(t)
 

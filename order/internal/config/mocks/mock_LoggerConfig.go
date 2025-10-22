@@ -114,7 +114,8 @@ func (_c *LoggerConfig_Level_Call) RunAndReturn(run func() string) *LoggerConfig
 func NewLoggerConfig(t interface {
 	mock.TestingT
 	Cleanup(func())
-}) *LoggerConfig {
+},
+) *LoggerConfig {
 	mock := &LoggerConfig{}
 	mock.Mock.Test(t)
 

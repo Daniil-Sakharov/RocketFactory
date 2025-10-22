@@ -4,15 +4,17 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net"
+
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/reflection"
+
 	"github.com/Daniil-Sakharov/RocketFactory/payment/internal/config"
 	"github.com/Daniil-Sakharov/RocketFactory/platform/pkg/closer"
 	"github.com/Daniil-Sakharov/RocketFactory/platform/pkg/grpc/health"
 	"github.com/Daniil-Sakharov/RocketFactory/platform/pkg/logger"
 	paymentv1 "github.com/Daniil-Sakharov/RocketFactory/shared/pkg/proto/payment/v1"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
-	"google.golang.org/grpc/reflection"
-	"net"
 )
 
 type App struct {
@@ -26,18 +28,18 @@ func New(ctx context.Context) (*App, error) {
 
 	err := a.InitDeps(ctx)
 	if err != nil {
-		return nil,err
+		return nil, err
 	}
 
 	return a, nil
 }
 
-func (a *App)Run(ctx context.Context) error {
+func (a *App) Run(ctx context.Context) error {
 	return a.runGRPCServer(ctx)
 }
 
 func (a *App) InitDeps(ctx context.Context) error {
-	inits := []func(context.Context) error {
+	inits := []func(context.Context) error{
 		a.initDI,
 		a.initLogger,
 		a.initCloser,
