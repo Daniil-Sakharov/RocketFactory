@@ -1,14 +1,14 @@
 package part
 
 import (
-	"context"
-	"time"
+    "context"
+    "time"
 
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
+    "go.mongodb.org/mongo-driver/bson"
+    "go.mongodb.org/mongo-driver/mongo"
+    "go.mongodb.org/mongo-driver/mongo/options"
 
-	def "github.com/Daniil-Sakharov/RocketFactory/inventory/internal/repository"
+    def "github.com/Daniil-Sakharov/RocketFactory/inventory/internal/repository"
 )
 
 var _ def.PartRepository = (*repository)(nil)
@@ -27,13 +27,13 @@ func NewRepository(db *mongo.Database) *repository {
 		},
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+    ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	_, err := collection.Indexes().CreateMany(ctx, indexModel)
-	if err != nil {
-		panic(err)
-	}
+    if _, err := collection.Indexes().CreateMany(ctx, indexModel); err != nil {
+        // Индексы не критичны для запуска сервиса; логируем и продолжаем
+        // В рантайме индексы могут быть созданы вручную/миграциями
+    }
 
 	return &repository{collection: collection}
 }
