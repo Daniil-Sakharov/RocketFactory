@@ -39,5 +39,3 @@ node_modules
 **/api/swagger-ui.html
 api/swagger.json
 api/swagger-ui.html
-package-lock.json
-package.json
