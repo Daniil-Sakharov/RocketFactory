@@ -18,7 +18,11 @@ func NewHandler(cfg Config) http.HandlerFunc {
 			"version": cfg.Version,
 		}
 		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusOK)
-		_ = json.NewEncoder(w).Encode(response)
+        w.WriteHeader(http.StatusOK)
+        if err := json.NewEncoder(w).Encode(response); err != nil {
+            // If writing response fails, there's nothing meaningful we can do here
+            // because headers are already sent; just return to end the handler.
+            return
+        }
 	}
 }

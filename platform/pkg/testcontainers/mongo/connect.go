@@ -18,13 +18,20 @@ func connectMongoClient(ctx context.Context, uri string) (*mongo.Client, error) 
 	var client *mongo.Client
 	var err error
 
-	for attempt := 1; attempt <= maxRetries; attempt++ {
+    for attempt := 1; attempt <= maxRetries; attempt++ {
 		client, err = mongo.Connect(ctx, options.Client().ApplyURI(uri))
 		if err != nil {
-			if attempt < maxRetries {
-				time.Sleep(retryDelay)
-				continue
-			}
+            if attempt < maxRetries {
+                // Wait respecting context instead of time.Sleep
+                timer := time.NewTimer(retryDelay)
+                select {
+                case <-ctx.Done():
+                    timer.Stop()
+                    return nil, ctx.Err()
+                case <-timer.C:
+                }
+                continue
+            }
 			return nil, errors.Errorf("failed to connect to mongo after %d attempts: %v", maxRetries, err)
 		}
 
@@ -34,12 +41,21 @@ func connectMongoClient(ctx context.Context, uri string) (*mongo.Client, error) 
 			return client, nil
 		}
 
-		// Если ping не прошел, закрываем клиента и пробуем снова
-		_ = client.Disconnect(ctx)
+        // Если ping не прошел, закрываем клиента и пробуем снова
+        if derr := client.Disconnect(ctx); derr != nil {
+            // nothing to do here; next retry will create a new client
+        }
 
-		if attempt < maxRetries {
-			time.Sleep(retryDelay)
-		}
+        if attempt < maxRetries {
+            // Wait respecting context instead of time.Sleep
+            timer := time.NewTimer(retryDelay)
+            select {
+            case <-ctx.Done():
+                timer.Stop()
+                return nil, ctx.Err()
+            case <-timer.C:
+            }
+        }
 	}
 
 	return nil, errors.Errorf("failed to ping mongo after %d attempts: %v", maxRetries, err)
