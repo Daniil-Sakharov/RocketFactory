@@ -16,8 +16,6 @@ import (
 )
 
 func (r *repository) GetPart(ctx context.Context, uuid string) (*model.Part, error) {
-	logger.Info(ctx, "🔍 GetPart called", zap.String("uuid", uuid))
-
 	var repoPart repoModel.Part
 	err := r.collection.FindOne(ctx, bson.M{"uuid": uuid}).Decode(&repoPart)
 	if err != nil {
