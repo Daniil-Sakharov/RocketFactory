@@ -14,13 +14,10 @@ import (
 )
 
 func (r *repository) ListParts(ctx context.Context, filter *model.PartsFilter) ([]*model.Part, error) {
-	logger.Info(ctx, "🔍 ListParts called", zap.Any("filter", filter))
-
 	mongoFilter := bson.M{}
 
 	// Handle nil filter
 	if filter == nil {
-		logger.Info(ctx, "Filter is nil, returning all documents")
 		filter = &model.PartsFilter{} // Create empty filter
 	}
 
@@ -53,23 +50,13 @@ func (r *repository) ListParts(ctx context.Context, filter *model.PartsFilter) (
 	}
 
 	defer func() {
-		err = cursor.Close(ctx)
-		if err != nil {
-			log.Println("failed to close cursor")
-		}
+		_ = cursor.Close(ctx) //nolint:gosec // Cursor close error is not critical
 	}()
 
 	err = cursor.All(ctx, &repoParts)
 	if err != nil {
-		logger.Error(ctx, "Failed to decode cursor", zap.Error(err))
 		return nil, fmt.Errorf("failed to parse: %w", err)
 	}
-
-	modelParts := converter.PartsToModel(repoParts)
-
-	return modelParts, nil
-}
-
 
 	modelParts := converter.PartsToModel(repoParts)
 
