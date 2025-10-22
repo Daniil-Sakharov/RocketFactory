@@ -20,6 +20,7 @@
 # env file
 .env
 /.idea
+.env.template
 /.vscode
 /.qodo
 /.cursor
@@ -32,6 +33,7 @@ node_modules
 /microservices-course-examples-main
 /microservices-course-homework-main
 .mockery_boilerplate_text.txt
+.dockerignore
 
 # Swagger UI (автогенерация)
 **/api/swagger.json
