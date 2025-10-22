@@ -114,10 +114,13 @@ func setupTestEnvironment(ctx context.Context) *TestEnvironment {
 	}
 	logger.Info(ctx, "✅ Контейнер приложения успешно запущен")
 
-	// Дополнительное время для стабилизации mapped port
-	// testcontainers проверяет порт внутри контейнера, но mapped port снаружи может быть не ready
-	logger.Info(ctx, "⏳ Ожидание готовности mapped port...")
-	time.Sleep(5 * time.Second)
+	// Активно проверяем доступность mapped port снаружи контейнера
+	// testcontainers проверяет порт внутри контейнера, но это не гарантирует доступность mapped port
+	err = waitForPort(ctx, appContainer.Address(), 30, time.Second)
+	if err != nil {
+		cleanupTestEnvironment(ctx, &TestEnvironment{Network: generatedNetwork, Mongo: generatedMongo, App: appContainer})
+		logger.Fatal(ctx, "mapped port не стал доступен", zap.Error(err))
+	}
 
 	logger.Info(ctx, "🎉 Тестовое окружение готово")
 	return &TestEnvironment{
