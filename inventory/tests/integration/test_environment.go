@@ -71,6 +71,15 @@ func (env *TestEnvironment) InsertTestPart(ctx context.Context) (string, error) 
 func (env *TestEnvironment) InsertTestParts(ctx context.Context) error {
 	now := time.Now()
 
+	// Используем базу данных из переменной окружения MONGO_DATABASE
+	databaseName := os.Getenv("MONGO_DATABASE")
+	if databaseName == "" {
+		databaseName = "inventory" // fallback значение должно совпадать с .env
+	}
+
+	// Log database name for debugging
+	println("DEBUG: Inserting test data into database:", databaseName, "collection:", partsCollectionName) //nolint:forbidigo // Debug logging for tests
+
 	// Создаем 5 разных деталей с разными категориями
 	parts := []interface{}{
 		// Двигатель
@@ -193,12 +202,6 @@ func (env *TestEnvironment) InsertTestParts(ctx context.Context) error {
 			"created_at": primitive.NewDateTimeFromTime(now),
 			"updated_at": primitive.NewDateTimeFromTime(now),
 		},
-	}
-
-	// Используем базу данных из переменной окружения MONGO_DATABASE
-	databaseName := os.Getenv("MONGO_DATABASE")
-	if databaseName == "" {
-		databaseName = "inventory" // fallback значение должно совпадать с .env
 	}
 
 	_, err := env.Mongo.Client().Database(databaseName).Collection(partsCollectionName).InsertMany(ctx, parts)
