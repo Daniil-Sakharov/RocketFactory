@@ -4,11 +4,13 @@ package integration
 
 import (
 	"context"
+	"fmt"
 	"net"
 	"time"
 
-	"github.com/Daniil-Sakharov/RocketFactory/platform/pkg/logger"
 	"go.uber.org/zap"
+
+	"github.com/Daniil-Sakharov/RocketFactory/platform/pkg/logger"
 )
 
 // waitForPort waits for a TCP port to become available
