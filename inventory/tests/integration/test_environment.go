@@ -56,7 +56,7 @@ func (env *TestEnvironment) InsertTestPart(ctx context.Context) (string, error) 
 	// Используем базу данных из переменной окружения MONGO_DATABASE
 	databaseName := os.Getenv("MONGO_DATABASE")
 	if databaseName == "" {
-		databaseName = "inventory-service" // fallback значение
+		databaseName = "inventory" // fallback значение должно совпадать с .env
 	}
 
 	_, err := env.Mongo.Client().Database(databaseName).Collection(partsCollectionName).InsertOne(ctx, partDoc)
@@ -198,7 +198,7 @@ func (env *TestEnvironment) InsertTestParts(ctx context.Context) error {
 	// Используем базу данных из переменной окружения MONGO_DATABASE
 	databaseName := os.Getenv("MONGO_DATABASE")
 	if databaseName == "" {
-		databaseName = "inventory-service" // fallback значение
+		databaseName = "inventory" // fallback значение должно совпадать с .env
 	}
 
 	_, err := env.Mongo.Client().Database(databaseName).Collection(partsCollectionName).InsertMany(ctx, parts)
@@ -286,7 +286,7 @@ func (env *TestEnvironment) InsertTestPartWithData(ctx context.Context, part *in
 	// Используем базу данных из переменной окружения MONGO_DATABASE
 	databaseName := os.Getenv("MONGO_DATABASE")
 	if databaseName == "" {
-		databaseName = "inventory-service" // fallback значение
+		databaseName = "inventory" // fallback значение должно совпадать с .env
 	}
 
 	_, err := env.Mongo.Client().Database(databaseName).Collection(partsCollectionName).InsertOne(ctx, partDoc)
@@ -336,7 +336,7 @@ func (env *TestEnvironment) ClearPartsCollection(ctx context.Context) error {
 	// Используем базу данных из переменной окружения MONGO_DATABASE
 	databaseName := os.Getenv("MONGO_DATABASE")
 	if databaseName == "" {
-		databaseName = "inventory-service" // fallback значение
+		databaseName = "inventory" // fallback значение должно совпадать с .env
 	}
 
 	_, err := env.Mongo.Client().Database(databaseName).Collection(partsCollectionName).DeleteMany(ctx, bson.M{})
