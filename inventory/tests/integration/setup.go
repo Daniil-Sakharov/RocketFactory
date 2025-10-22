@@ -42,18 +42,18 @@ type TestEnvironment struct {
 func setupTestEnvironment(ctx context.Context) *TestEnvironment {
 	logger.Info(ctx, "🚀 Подготовка тестового окружения...")
 
-	generatedNetwork, err := network.NewNetwork(ctx, projectName)
+	generatedNetwork, err := network.NewNetwork(ctx, "inventory-service")
 	if err != nil {
 		logger.Fatal(ctx, "не удалось создать общую сеть", zap.Error(err))
 	}
 	logger.Info(ctx, "✅ Сеть успешно создана")
 
-	mongoUsername := getEnvWithLogging(ctx, testcontainers.MongoUsernameKey)
-	mongoPassword := getEnvWithLogging(ctx, testcontainers.MongoPasswordKey)
-	mongoImageName := getEnvWithLogging(ctx, testcontainers.MongoImageNameKey)
-	mongoDatabase := getEnvWithLogging(ctx, testcontainers.MongoDatabaseKey)
+	mongoUsername := getEnvWithLogging(ctx, "MONGO_INITDB_ROOT_USERNAME")
+	mongoPassword := getEnvWithLogging(ctx, "MONGO_INITDB_ROOT_PASSWORD")
+	mongoImageName := getEnvWithLogging(ctx, "MONGO_IMAGE_NAME")
+	mongoDatabase := getEnvWithLogging(ctx, "MONGO_DATABASE")
 
-	grpcPort := getEnvWithLogging(ctx, grpcPortKey)
+	grpcPort := getEnvWithLogging(ctx, "GRPC_PORT")
 
 	generatedMongo, err := mongo.NewContainer(ctx,
 		mongo.WithNetworkName(generatedNetwork.Name()),
@@ -73,17 +73,18 @@ func setupTestEnvironment(ctx context.Context) *TestEnvironment {
 
 	appEnv := map[string]string{
 		// Переопределяем хост MongoDB для подключения к контейнеру из testcontainers
-		testcontainers.MongoHostKey:     generatedMongo.Config().ContainerName,
-		testcontainers.MongoPortKey:     testcontainers.MongoPort,
-		testcontainers.MongoDatabaseKey: mongoDatabase,
-		testcontainers.MongoUsernameKey: mongoUsername,
-		testcontainers.MongoPasswordKey: mongoPassword,
-		testcontainers.MongoAuthDBKey:   getEnvWithLogging(ctx, testcontainers.MongoAuthDBKey),
-		grpcHostKey:                     grpcHostValue,
-		grpcPortKey:                     grpcPort,
-		"LOGGER_LEVEL":                  loggerLevelValue,
+		"MONGO_HOST":     generatedMongo.Config().ContainerName,
+		"MONGO_PORT":     "27017",
+		"MONGO_DATABASE": mongoDatabase,
+		"MONGO_INITDB_ROOT_USERNAME": mongoUsername,
+		"MONGO_INITDB_ROOT_PASSWORD": mongoPassword,
+		"MONGO_AUTH_DB":   getEnvWithLogging(ctx, "MONGO_AUTH_DB"),
+		"GRPC_HOST":                     grpcHostValue,
+		"GRPC_PORT":                     grpcPort,
+		"LOGGER_LEVEL":                  "debug",
 		"LOGGER_AS_JSON":                "true",
 	}
+
 
 	logger.Info(ctx, "🚀 Starting app container",
 		zap.String("network", generatedNetwork.Name()),
