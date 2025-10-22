@@ -2,27 +2,27 @@ package config
 
 import "time"
 
-type LoggerConfig interface{
-	Level()string
-	AsJson()bool
+type LoggerConfig interface {
+	Level() string
+	AsJson() bool
 }
 
-type InventoryGRPCConfig interface{
+type InventoryGRPCConfig interface {
 	Address() string
 }
 
-type PaymentGRPCConfig interface{
+type PaymentGRPCConfig interface {
 	Address() string
 }
 
-type OrderHTTPConfig interface{
+type OrderHTTPConfig interface {
 	Address() string
 	ReadTimeout() time.Duration
 	WriteTimeout() time.Duration
 	IdleTimeout() time.Duration
 }
 
-type PostgresConfig interface{
+type PostgresConfig interface {
 	URI() string
 	DatabaseName() string
 	MigrationsDir() string

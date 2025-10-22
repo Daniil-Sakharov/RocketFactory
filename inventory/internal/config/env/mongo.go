@@ -2,6 +2,7 @@ package env
 
 import (
 	"fmt"
+
 	"github.com/caarlos0/env/v11"
 )
 
@@ -36,7 +37,7 @@ func (cfg *mongoConfig) URI() string {
 		cfg.raw.Port,
 		cfg.raw.Database,
 		cfg.raw.AuthDB,
-		)
+	)
 }
 
 func (cfg *mongoConfig) DBName() string {

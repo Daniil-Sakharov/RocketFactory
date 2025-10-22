@@ -7,13 +7,14 @@ import (
 	"os"
 	"time"
 
-	"github.com/Daniil-Sakharov/RocketFactory/inventory/internal/converter"
-	repoConverter "github.com/Daniil-Sakharov/RocketFactory/inventory/internal/repository/converter"
-	inventoryV1 "github.com/Daniil-Sakharov/RocketFactory/shared/pkg/proto/inventory/v1"
 	"github.com/brianvoe/gofakeit/v7"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"google.golang.org/protobuf/types/known/timestamppb"
+
+	"github.com/Daniil-Sakharov/RocketFactory/inventory/internal/converter"
+	repoConverter "github.com/Daniil-Sakharov/RocketFactory/inventory/internal/repository/converter"
+	inventoryV1 "github.com/Daniil-Sakharov/RocketFactory/shared/pkg/proto/inventory/v1"
 )
 
 // InsertTestPart — вставляет одну тестовую деталь в коллекцию Mongo и возвращает её UUID
