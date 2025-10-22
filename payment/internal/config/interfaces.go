@@ -1,10 +1,10 @@
 package config
 
-type PaymentConfig interface{
+type PaymentConfig interface {
 	Address() string
 }
 
-type LoggerConfig interface{
+type LoggerConfig interface {
 	Level() string
 	AsJson() bool
 }

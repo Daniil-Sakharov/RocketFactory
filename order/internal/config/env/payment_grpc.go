@@ -1,16 +1,17 @@
 package env
 
 import (
-	"github.com/caarlos0/env/v11"
 	"net"
+
+	"github.com/caarlos0/env/v11"
 )
 
-type paymentGRPCEnvConfig struct{
+type paymentGRPCEnvConfig struct {
 	Host string `env:"PAYMENT_GRPC_HOST,required"`
 	Port string `env:"PAYMENT_GRPC_PORT,required"`
 }
 
-type paymentGRPCConfig struct{
+type paymentGRPCConfig struct {
 	raw paymentGRPCEnvConfig
 }
 

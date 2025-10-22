@@ -92,7 +92,9 @@ func (d *diContainer) MongoDBClient(ctx context.Context) *mongo.Client {
 			logger.Warn(ctx, fmt.Sprintf("Failed to ping MongoDB (attempt %d/%d): %v", attempt, maxRetries, err))
 
 			// Закрываем неудачное соединение
-			_ = client.Disconnect(ctx)
+			if disconnectErr := client.Disconnect(ctx); disconnectErr != nil {
+				logger.Warn(ctx, "Failed to disconnect MongoDB client", zap.Error(disconnectErr))
+			}
 			client = nil
 
 			if attempt < maxRetries {

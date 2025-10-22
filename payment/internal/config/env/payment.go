@@ -1,16 +1,17 @@
 package env
 
 import (
-	"github.com/caarlos0/env/v11"
 	"net"
+
+	"github.com/caarlos0/env/v11"
 )
 
-type paymentEnvConfig struct{
+type paymentEnvConfig struct {
 	Host string `env:"GRPC_HOST,required"`
 	Port string `env:"GRPC_PORT,required"`
 }
 
-type paymentConfig struct{
+type paymentConfig struct {
 	raw paymentEnvConfig
 }
 
@@ -23,6 +24,6 @@ func NewPaymentConfig() (*paymentConfig, error) {
 	return &paymentConfig{raw: raw}, nil
 }
 
-func (p *paymentConfig)Address() string {
-	return net.JoinHostPort(p.raw.Host,p.raw.Port)
+func (p *paymentConfig) Address() string {
+	return net.JoinHostPort(p.raw.Host, p.raw.Port)
 }
