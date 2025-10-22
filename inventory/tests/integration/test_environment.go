@@ -24,6 +24,7 @@ func (env *TestEnvironment) InsertTestPart(ctx context.Context) (string, error) 
 
 	partDoc := bson.M{
 		"_id":            partUUID,
+		"uuid":           partUUID, // ВАЖНО: добавляем поле uuid для корректного поиска
 		"name":           gofakeit.CarMaker() + " " + gofakeit.CarModel(),
 		"description":    gofakeit.Sentence(10),
 		"price":          gofakeit.Float64Range(100.0, 100000.0),
@@ -81,10 +82,17 @@ func (env *TestEnvironment) InsertTestParts(ctx context.Context) error {
 	println("DEBUG: Inserting test data into database:", databaseName, "collection:", partsCollectionName) //nolint:forbidigo // Debug logging for tests
 
 	// Создаем 5 разных деталей с разными категориями
+	uuid1 := gofakeit.UUID()
+	uuid2 := gofakeit.UUID()
+	uuid3 := gofakeit.UUID()
+	uuid4 := gofakeit.UUID()
+	uuid5 := gofakeit.UUID()
+
 	parts := []interface{}{
 		// Двигатель
 		bson.M{
-			"_id":            gofakeit.UUID(),
+			"_id":            uuid1,
+			"uuid":           uuid1, // ВАЖНО: добавляем поле uuid для корректного поиска
 			"name":           "Ионный двигатель X-500",
 			"description":    "Высокоэффективный ионный двигатель для межпланетных перелетов",
 			"price":          50000.0,
@@ -108,7 +116,8 @@ func (env *TestEnvironment) InsertTestParts(ctx context.Context) error {
 		},
 		// Топливо
 		bson.M{
-			"_id":            gofakeit.UUID(),
+			"_id":            uuid2,
+			"uuid":           uuid2,
 			"name":           "Жидкий ксенон премиум",
 			"description":    "Высокочистый жидкий ксенон для ионных двигателей",
 			"price":          1500.0,
@@ -132,7 +141,8 @@ func (env *TestEnvironment) InsertTestParts(ctx context.Context) error {
 		},
 		// Иллюминатор
 		bson.M{
-			"_id":            gofakeit.UUID(),
+			"_id":            uuid3,
+			"uuid":           uuid3,
 			"name":           "Панорамный иллюминатор AstroView",
 			"description":    "Многослойный защищенный иллюминатор с антибликовым покрытием",
 			"price":          8000.0,
@@ -156,7 +166,8 @@ func (env *TestEnvironment) InsertTestParts(ctx context.Context) error {
 		},
 		// Крыло
 		bson.M{
-			"_id":            gofakeit.UUID(),
+			"_id":            uuid4,
+			"uuid":           uuid4,
 			"name":           "Аэродинамическое крыло Delta-9",
 			"description":    "Титановое крыло с регулируемой геометрией для атмосферного полета",
 			"price":          35000.0,
@@ -180,7 +191,8 @@ func (env *TestEnvironment) InsertTestParts(ctx context.Context) error {
 		},
 		// Еще один двигатель
 		bson.M{
-			"_id":            gofakeit.UUID(),
+			"_id":            uuid5,
+			"uuid":           uuid5,
 			"name":           "Плазменный двигатель Nebula-7",
 			"description":    "Компактный плазменный двигатель нового поколения",
 			"price":          75000.0,
@@ -235,6 +247,7 @@ func (env *TestEnvironment) InsertTestPartWithData(ctx context.Context, part *in
 
 	partDoc := bson.M{
 		"_id":            partUUID,
+		"uuid":           partUUID, // ВАЖНО: добавляем поле uuid
 		"name":           part.Name,
 		"description":    part.Description,
 		"price":          part.Price,
