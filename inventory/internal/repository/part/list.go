@@ -8,13 +8,17 @@ import (
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.uber.org/zap"
 
 	"github.com/Daniil-Sakharov/RocketFactory/inventory/internal/model"
 	"github.com/Daniil-Sakharov/RocketFactory/inventory/internal/repository/converter"
 	repoModel "github.com/Daniil-Sakharov/RocketFactory/inventory/internal/repository/model"
+	"github.com/Daniil-Sakharov/RocketFactory/platform/pkg/logger"
 )
 
 func (r *repository) ListParts(ctx context.Context, filter *model.PartsFilter) ([]*model.Part, error) {
+	logger.Info(ctx, "🔍 ListParts called", zap.Any("filter", filter))
+
 	mongoFilter := bson.M{}
 
 	if len(filter.Uuids) > 0 {
@@ -52,10 +56,15 @@ func (r *repository) ListParts(ctx context.Context, filter *model.PartsFilter) (
 
 	err = cursor.All(ctx, &repoParts)
 	if err != nil {
+		logger.Error(ctx, "Failed to decode cursor", zap.Error(err))
 		return nil, fmt.Errorf("failed to parse")
 	}
 
 	// Debug logging for tests
+	logger.Info(ctx, "📊 ListParts result",
+		zap.Int("found_count", len(repoParts)),
+		zap.String("collection", r.collection.Name()),
+		zap.Any("mongo_filter", mongoFilter))
 	log.Printf("DEBUG: ListParts found %d parts in database, collection: %s\n", len(repoParts), r.collection.Name()) //nolint:forbidigo // Debug logging
 
 	modelParts := converter.PartsToModel(repoParts)
