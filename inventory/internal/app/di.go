@@ -60,18 +60,24 @@ func (d *diContainer) MongoDBClient(ctx context.Context) *mongo.Client {
 		var client *mongo.Client
 		var err error
 
-		// Пытаемся подключиться 20 раз с интервалом 3 секунды
-		// MongoDB в Docker может инициализироваться до 60 секунд
-		maxRetries := 20
-		retryDelay := 3 * time.Second
+        // Пытаемся подключиться 20 раз с интервалом 3 секунды
+        // MongoDB в Docker может инициализироваться до 60 секунд
+        maxRetries := 20
+        retryDelay := 3 * time.Second
 
 		for attempt := 1; attempt <= maxRetries; attempt++ {
 			client, err = mongo.Connect(ctx, options.Client().ApplyURI(mongoURI))
-			if err != nil {
-				logger.Warn(ctx, fmt.Sprintf("Failed to connect to MongoDB (attempt %d/%d): %v", attempt, maxRetries, err))
-				time.Sleep(retryDelay)
-				continue
-			}
+            if err != nil {
+                logger.Warn(ctx, fmt.Sprintf("Failed to connect to MongoDB (attempt %d/%d): %v", attempt, maxRetries, err))
+                timer := time.NewTimer(retryDelay)
+                select {
+                case <-ctx.Done():
+                    timer.Stop()
+                    panic(fmt.Sprintf("context canceled while connecting to MongoDB: %v", ctx.Err()))
+                case <-timer.C:
+                }
+                continue
+            }
 
 			// Проверяем подключение
 			err = client.Ping(ctx, readpref.Primary())
@@ -86,9 +92,15 @@ func (d *diContainer) MongoDBClient(ctx context.Context) *mongo.Client {
 			_ = client.Disconnect(ctx)
 			client = nil
 
-			if attempt < maxRetries {
-				time.Sleep(retryDelay)
-			}
+            if attempt < maxRetries {
+                timer := time.NewTimer(retryDelay)
+                select {
+                case <-ctx.Done():
+                    timer.Stop()
+                    panic(fmt.Sprintf("context canceled while pinging MongoDB: %v", ctx.Err()))
+                case <-timer.C:
+                }
+            }
 		}
 
 		if err != nil || client == nil {

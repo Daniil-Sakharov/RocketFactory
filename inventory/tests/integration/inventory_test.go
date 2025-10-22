@@ -23,9 +23,12 @@ var _ = Describe("InventoryService", func() {
 	BeforeEach(func() {
 		ctx, cancel = context.WithCancel(suiteCtx)
 
-		// Даем Docker время настроить port mapping
-		// Приложение готово внутри контейнера, но mapped port может быть еще не доступен с хоста
-		time.Sleep(1 * time.Second)
+        // Даем Docker время настроить port mapping (контекст-осознанная задержка)
+        select {
+        case <-time.After(1 * time.Second):
+        case <-ctx.Done():
+            Fail("context canceled while waiting for port mapping")
+        }
 
 		// Создаём gRPC клиент
 		conn, err := grpc.NewClient(
