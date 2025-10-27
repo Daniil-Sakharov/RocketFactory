@@ -36,7 +36,6 @@ func (r *repository) Update(ctx context.Context, order *domain.Order) error {
             transaction_uuid = :transaction_uuid,
             updated_at = NOW()
         WHERE order_uuid = :order_uuid
-          AND order_status = 'PENDING_PAYMENT'
     `
 
 	result, err := tx.NamedExecContext(ctx, updateQuery, repoOrder)

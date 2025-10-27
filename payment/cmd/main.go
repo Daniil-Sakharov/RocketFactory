@@ -15,11 +15,10 @@ import (
 	"github.com/Daniil-Sakharov/RocketFactory/platform/pkg/logger"
 )
 
+const configPath = "./deploy/compose/payment/.env"
+
 func main() {
-	// .env файл опционален:
-	// - В локальной разработке: загружается из корня проекта или указанного пути
-	// - В Docker: переменные передаются через environment (-e флаги)
-	err := config.Load()
+	err := config.Load(configPath)
 	if err != nil {
 		panic(fmt.Errorf("error to load config: %w", err))
 	}

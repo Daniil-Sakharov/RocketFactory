@@ -15,6 +15,8 @@ import (
 	"github.com/Daniil-Sakharov/RocketFactory/platform/pkg/logger"
 )
 
+const configPath = "./deploy/compose/inventory/.env"
+
 func main() {
 	defer func() {
 		if r := recover(); r != nil {
@@ -22,7 +24,7 @@ func main() {
 		}
 	}()
 
-	err := config.Load()
+	err := config.Load(configPath)
 	if err != nil {
 		panic(fmt.Errorf("error to load config: %w", err))
 	}

@@ -5,6 +5,8 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/google/uuid"
+
 	"github.com/Daniil-Sakharov/RocketFactory/order/internal/model"
 	"github.com/Daniil-Sakharov/RocketFactory/order/internal/model/domain"
 	"github.com/Daniil-Sakharov/RocketFactory/order/internal/model/dto"
@@ -50,6 +52,19 @@ func (s *service) Pay(ctx context.Context, req *dto.PayOrderRequest) (*domain.Or
 			return nil, err
 		}
 		return nil, fmt.Errorf("failed to update order: %w", err)
+	}
+
+	produceOrder := &domain.OrderProduceEvent{
+		EventUUID:       uuid.New().String(),
+		OrderUUID:       newOrder.OrderUUID,
+		UserUUID:        newOrder.UserUUID,
+		PaymentMethod:   string(newOrder.PaymentMethod),
+		TransactionUUID: newOrder.TransactionUUID,
+	}
+
+	err = s.orderProducer.PublishOrderPaid(ctx, produceOrder)
+	if err != nil {
+		return nil, fmt.Errorf("failed to produce order: %w", err)
 	}
 
 	return newOrder, nil
