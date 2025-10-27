@@ -10,4 +10,6 @@ const (
 	OrderStatusPAID OrderStatus = "PAID"
 	// OrderStatusCANCELLED - заказ отменен
 	OrderStatusCANCELLED OrderStatus = "CANCELLED"
+	// OrderStatusASSEMBLED - заказ собран
+	OrderStatusASSEMBLED OrderStatus = "ASSEMBLED"
 )

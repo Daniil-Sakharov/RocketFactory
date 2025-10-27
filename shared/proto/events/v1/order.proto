@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package events.v1;
+
+option go_package = "github.com/Daniil-Sakharov/RocketFactory/shared/pkg/proto/events/v1;events_v1";
+
+// Исходящее(в order сервис) и входящее(в assembly сервис) событие в Kafka
+message OrderPaid {
+  // uuid события (для идемпотентности)
+  string event_uuid = 1;
+  // uuid заказа
+  string order_uuid = 2;
+  // uuid пользователя
+  string user_uuid = 3;
+  // метод оплаты
+  string payment_method = 4;
+  // uuid транзакции
+  string transaction_uuid = 5;
+}
+
+// Исходящее событие в assembly сервис в Kafka
+message ShipAssembled {
+  // uuid события (для идемпотентности)
+  string event_uuid = 1;
+  // uuid заказа
+  string order_uuid = 2;
+  // uuid пользователя
+  string user_uuid = 3;
+  // Время (в секундах), потраченное на сборку корабля
+  int64 build_time_sec = 4;
+}
+

@@ -49,6 +49,7 @@ func (d *diContainer) InventoryService(ctx context.Context) service.PartService 
 func (d *diContainer) InventoryRepository(ctx context.Context) repository.PartRepository {
 	if d.inventoryRepository == nil {
 		d.inventoryRepository = repoPart.NewRepository(ctx, d.MongoDBDatabase(ctx))
+		d.inventoryRepository.InitTestData(ctx)
 	}
 	return d.inventoryRepository
 }
