@@ -15,8 +15,8 @@ func OrderPaidEventToTemplateData(event *domain.OrderConsumeEvent) *domain.Order
 
 func ShipAssembledEventToTemplateData(event *domain.AssemblyConsumeEvent) *domain.AssembledTemplateData {
 	return &domain.AssembledTemplateData{
-		OrderUUID:    event.OrderUUID,
-		UserUUID:     event.UserUUID,
-		BuildTimeSec: event.BuildTimeSec,
+		OrderUUID: event.OrderUUID,
+		UserUUID:  event.UserUUID,
+		BuildTime: event.BuildTime,
 	}
 }

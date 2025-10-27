@@ -3,11 +3,12 @@ package handler
 import (
 	"context"
 
-	"github.com/Daniil-Sakharov/RocketFactory/notification/internal/service/telegram/keyboard"
-	"github.com/Daniil-Sakharov/RocketFactory/platform/pkg/logger"
 	"github.com/go-telegram/bot"
 	"github.com/go-telegram/bot/models"
 	"go.uber.org/zap"
+
+	"github.com/Daniil-Sakharov/RocketFactory/notification/internal/service/telegram/keyboard"
+	"github.com/Daniil-Sakharov/RocketFactory/platform/pkg/logger"
 )
 
 var _ Handler = (*StartHandler)(nil)
@@ -53,7 +54,6 @@ func (h *StartHandler) Handle(ctx context.Context, b *bot.Bot, update *models.Up
 		ParseMode:   "Markdown",
 		ReplyMarkup: mainMenu,
 	})
-
 	if err != nil {
 		logger.Error(ctx, "Failed to send welcome message", zap.Error(err))
 	}

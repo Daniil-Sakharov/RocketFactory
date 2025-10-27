@@ -5,8 +5,8 @@ import (
 	"github.com/caarlos0/env/v11"
 )
 
-type assemblyConsumerEnvConfig struct{
-	Topic string `env:"CONSUME_TOPIC_NAME,required"`
+type assemblyConsumerEnvConfig struct {
+	Topic   string `env:"CONSUME_TOPIC_NAME,required"`
 	GroupID string `env:"ORDER_ASSEMBLED_CONSUMER_GROUP_ID,required"`
 }
 

@@ -3,10 +3,11 @@ package decoder
 import (
 	"fmt"
 
+	"google.golang.org/protobuf/proto"
+
 	def "github.com/Daniil-Sakharov/RocketFactory/assembly/internal/converter/kafka"
 	"github.com/Daniil-Sakharov/RocketFactory/assembly/internal/model"
 	eventsv1 "github.com/Daniil-Sakharov/RocketFactory/shared/pkg/proto/events/v1"
-	"google.golang.org/protobuf/proto"
 )
 
 var _ def.OrderPaidDecoder = (*decoder)(nil)

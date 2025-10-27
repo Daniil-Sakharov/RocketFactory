@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+
 	"github.com/Daniil-Sakharov/RocketFactory/notification/internal/model/domain"
 )
 
@@ -18,6 +19,6 @@ type ShipAssemblyConsumerService interface {
 	RunAssemblyConsumer(ctx context.Context) error
 }
 
-type BotService interface{
+type BotService interface {
 	Start(ctx context.Context)
 }

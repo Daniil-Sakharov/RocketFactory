@@ -2,15 +2,15 @@ package domain
 
 import "time"
 
-type AssembledTemplateData struct{
+type AssembledTemplateData struct {
 	OrderUUID string
-	UserUUID string
-	BuildTimeSec time.Duration
+	UserUUID  string
+	BuildTime time.Duration
 }
 
-type OrderTemplateData struct{
-	OrderUUID string
-	UserUUID string
-	PaymentMethod string
+type OrderTemplateData struct {
+	OrderUUID       string
+	UserUUID        string
+	PaymentMethod   string
 	TransactionUUID string
 }

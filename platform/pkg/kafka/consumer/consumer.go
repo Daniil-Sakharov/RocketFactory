@@ -3,6 +3,7 @@ package consumer
 import (
 	"context"
 	"errors"
+
 	"github.com/IBM/sarama"
 	"go.uber.org/zap"
 )

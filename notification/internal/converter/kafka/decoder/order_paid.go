@@ -2,10 +2,12 @@ package decoder
 
 import (
 	"fmt"
+
+	"google.golang.org/protobuf/proto"
+
 	def "github.com/Daniil-Sakharov/RocketFactory/notification/internal/converter/kafka"
 	"github.com/Daniil-Sakharov/RocketFactory/notification/internal/model/domain"
 	eventsv1 "github.com/Daniil-Sakharov/RocketFactory/shared/pkg/proto/events/v1"
-	"google.golang.org/protobuf/proto"
 )
 
 var _ def.OrderDecoder = (*orderDecoder)(nil)
@@ -26,7 +28,7 @@ func (d *orderDecoder) OrderDecode(data []byte) (domain.OrderConsumeEvent, error
 		EventUUID:       pb.EventUuid,
 		OrderUUID:       pb.OrderUuid,
 		UserUUID:        pb.UserUuid,
-		PaymentMethod: pb.PaymentMethod,
+		PaymentMethod:   pb.PaymentMethod,
 		TransactionUUID: pb.TransactionUuid,
 	}, nil
 }

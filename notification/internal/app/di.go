@@ -3,6 +3,11 @@ package app
 import (
 	"context"
 	"fmt"
+
+	"github.com/IBM/sarama"
+	"github.com/go-telegram/bot"
+	"github.com/go-telegram/bot/models"
+
 	httpClient "github.com/Daniil-Sakharov/RocketFactory/notification/internal/client/http"
 	telegramClient "github.com/Daniil-Sakharov/RocketFactory/notification/internal/client/http/telegram"
 	"github.com/Daniil-Sakharov/RocketFactory/notification/internal/config"
@@ -17,9 +22,6 @@ import (
 	wrappedKafkaConsumer "github.com/Daniil-Sakharov/RocketFactory/platform/pkg/kafka/consumer"
 	"github.com/Daniil-Sakharov/RocketFactory/platform/pkg/logger"
 	kafkaMiddleware "github.com/Daniil-Sakharov/RocketFactory/platform/pkg/middleware/kafka"
-	"github.com/IBM/sarama"
-	"github.com/go-telegram/bot"
-	"github.com/go-telegram/bot/models"
 )
 
 type diContainer struct {
@@ -44,7 +46,6 @@ type diContainer struct {
 func NewDiContainer() *diContainer {
 	return &diContainer{}
 }
-
 
 func (d *diContainer) TelegramBot() *bot.Bot {
 	if d.telegramBot == nil {
@@ -101,7 +102,6 @@ func (d *diContainer) BotService() service.BotService {
 	}
 	return d.botService
 }
-
 
 func (d *diContainer) OrderPaidDecoder() kafkaConverter.OrderDecoder {
 	if d.orderPaidDecoder == nil {

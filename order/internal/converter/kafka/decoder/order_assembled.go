@@ -2,11 +2,13 @@ package decoder
 
 import (
 	"fmt"
+	"time"
+
+	"google.golang.org/protobuf/proto"
+
 	def "github.com/Daniil-Sakharov/RocketFactory/order/internal/converter/kafka"
 	"github.com/Daniil-Sakharov/RocketFactory/order/internal/model/domain"
 	eventsv1 "github.com/Daniil-Sakharov/RocketFactory/shared/pkg/proto/events/v1"
-	"google.golang.org/protobuf/proto"
-	"time"
 )
 
 var _ def.AssemblyDecoder = (*decoder)(nil)
@@ -24,9 +26,9 @@ func (d *decoder) Decode(data []byte) (domain.AssemblyConsumeEvent, error) {
 	}
 
 	return domain.AssemblyConsumeEvent{
-		EventUUID:       pb.EventUuid,
-		OrderUUID:       pb.OrderUuid,
-		UserUUID:        pb.UserUuid,
-		BuildTimeSec:    time.Duration(pb.BuildTimeSec),
+		EventUUID: pb.EventUuid,
+		OrderUUID: pb.OrderUuid,
+		UserUUID:  pb.UserUuid,
+		BuildTime: time.Duration(pb.BuildTimeSec) * time.Second,
 	}, nil
 }

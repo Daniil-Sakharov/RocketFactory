@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+
 	"github.com/google/uuid"
 
 	"github.com/Daniil-Sakharov/RocketFactory/order/internal/model"

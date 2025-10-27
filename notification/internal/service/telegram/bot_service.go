@@ -3,13 +3,13 @@ package telegram
 import (
 	"context"
 
-	serv "github.com/Daniil-Sakharov/RocketFactory/notification/internal/service"
+	"github.com/go-telegram/bot"
 
+	serv "github.com/Daniil-Sakharov/RocketFactory/notification/internal/service"
 	"github.com/Daniil-Sakharov/RocketFactory/notification/internal/service/telegram/handler"
 	"github.com/Daniil-Sakharov/RocketFactory/notification/internal/service/telegram/keyboard"
 	"github.com/Daniil-Sakharov/RocketFactory/notification/internal/service/telegram/message"
 	"github.com/Daniil-Sakharov/RocketFactory/platform/pkg/logger"
-	"github.com/go-telegram/bot"
 )
 
 var _ serv.BotService = (*botService)(nil)

@@ -8,6 +8,7 @@ import (
 
 	clientMocks "github.com/Daniil-Sakharov/RocketFactory/order/internal/client/grpc/mocks"
 	repoMocks "github.com/Daniil-Sakharov/RocketFactory/order/internal/repository/mocks"
+	serviceMocks "github.com/Daniil-Sakharov/RocketFactory/order/internal/service/mocks"
 )
 
 type ServiceSuite struct {
@@ -16,6 +17,7 @@ type ServiceSuite struct {
 	orderRepository *repoMocks.OrderRepository
 	inventoryClient *clientMocks.InventoryClient
 	paymentClient   *clientMocks.PaymentClient
+	orderProducer   *serviceMocks.OrderProducerService
 	service         *service
 }
 
@@ -25,11 +27,13 @@ func (s *ServiceSuite) SetupTest() {
 	s.orderRepository = repoMocks.NewOrderRepository(s.T())
 	s.inventoryClient = clientMocks.NewInventoryClient(s.T())
 	s.paymentClient = clientMocks.NewPaymentClient(s.T())
+	s.orderProducer = serviceMocks.NewOrderProducerService(s.T())
 
 	s.service = NewService(
 		s.orderRepository,
 		s.inventoryClient,
 		s.paymentClient,
+		s.orderProducer,
 	)
 }
 

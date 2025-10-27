@@ -3,10 +3,12 @@ package order_paid_consumer
 import (
 	"context"
 	"errors"
+
+	"go.uber.org/zap"
+
 	converter "github.com/Daniil-Sakharov/RocketFactory/notification/internal/converter/telegram"
 	"github.com/Daniil-Sakharov/RocketFactory/platform/pkg/kafka/consumer"
 	"github.com/Daniil-Sakharov/RocketFactory/platform/pkg/logger"
-	"go.uber.org/zap"
 )
 
 func (s *service) handleOrderPaid(ctx context.Context, msg consumer.Message) error {

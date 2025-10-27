@@ -1,9 +1,11 @@
 package config
 
 import (
-	"github.com/Daniil-Sakharov/RocketFactory/notification/internal/config/env"
-	"github.com/joho/godotenv"
 	"os"
+
+	"github.com/joho/godotenv"
+
+	"github.com/Daniil-Sakharov/RocketFactory/notification/internal/config/env"
 )
 
 var appConfig *config
@@ -46,11 +48,11 @@ func Load(path ...string) error {
 	}
 
 	appConfig = &config{
-		Logger: loggerCfg,
-		Kafka: kafkaCfg,
-		OrderConsumer: orderCfg,
+		Logger:           loggerCfg,
+		Kafka:            kafkaCfg,
+		OrderConsumer:    orderCfg,
 		AssemblyConsumer: assemblyCfg,
-		TelegramBot: tokenCfg,
+		TelegramBot:      tokenCfg,
 	}
 
 	return nil

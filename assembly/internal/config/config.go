@@ -1,16 +1,18 @@
 package config
 
 import (
-	"github.com/Daniil-Sakharov/RocketFactory/assembly/internal/config/env"
-	"github.com/joho/godotenv"
 	"os"
+
+	"github.com/joho/godotenv"
+
+	"github.com/Daniil-Sakharov/RocketFactory/assembly/internal/config/env"
 )
 
 var appConfig *config
 
-type config struct{
-	Logger LoggerConfig
-	Kafka KafkaConfig
+type config struct {
+	Logger        LoggerConfig
+	Kafka         KafkaConfig
 	OrderConsumer OrderConsumerConfig
 	OrderProducer OrderProducerConfig
 }

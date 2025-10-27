@@ -9,4 +9,3 @@ type OrderDecoder interface {
 type AssemblyDecoder interface {
 	AssemblyDecode(data []byte) (domain.AssemblyConsumeEvent, error)
 }
-

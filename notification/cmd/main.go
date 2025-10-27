@@ -3,14 +3,16 @@ package main
 import (
 	"context"
 	"fmt"
+	"os/signal"
+	"syscall"
+	"time"
+
+	"go.uber.org/zap"
+
 	"github.com/Daniil-Sakharov/RocketFactory/notification/internal/app"
 	"github.com/Daniil-Sakharov/RocketFactory/notification/internal/config"
 	"github.com/Daniil-Sakharov/RocketFactory/platform/pkg/closer"
 	"github.com/Daniil-Sakharov/RocketFactory/platform/pkg/logger"
-	"go.uber.org/zap"
-	"os/signal"
-	"syscall"
-	"time"
 )
 
 const configPath = "./deploy/compose/notification/.env"

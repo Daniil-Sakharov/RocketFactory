@@ -2,13 +2,15 @@ package order_producer
 
 import (
 	"context"
+
+	"go.uber.org/zap"
+	"google.golang.org/protobuf/proto"
+
 	"github.com/Daniil-Sakharov/RocketFactory/order/internal/model/domain"
 	def "github.com/Daniil-Sakharov/RocketFactory/order/internal/service"
 	"github.com/Daniil-Sakharov/RocketFactory/platform/pkg/kafka"
 	"github.com/Daniil-Sakharov/RocketFactory/platform/pkg/logger"
 	eventsv1 "github.com/Daniil-Sakharov/RocketFactory/shared/pkg/proto/events/v1"
-	"go.uber.org/zap"
-	"google.golang.org/protobuf/proto"
 )
 
 var _ def.OrderProducerService = (*service)(nil)
