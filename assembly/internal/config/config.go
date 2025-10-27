@@ -1,0 +1,56 @@
+package config
+
+import (
+	"github.com/Daniil-Sakharov/RocketFactory/assembly/internal/config/env"
+	"github.com/joho/godotenv"
+	"os"
+)
+
+var appConfig *config
+
+type config struct{
+	Logger LoggerConfig
+	Kafka KafkaConfig
+	OrderConsumer OrderConsumerConfig
+	OrderProducer OrderProducerConfig
+}
+
+func Load(path ...string) error {
+	err := godotenv.Load(path...)
+	if err != nil && !os.IsNotExist(err) {
+		return err
+	}
+
+	loggerCfg, err := env.NewLoggerConfig()
+	if err != nil {
+		return err
+	}
+
+	kafkaCfg, err := env.NewKafkaConfig()
+	if err != nil {
+		return err
+	}
+
+	consumerCfg, err := env.NewOrderConsumerConfig()
+	if err != nil {
+		return err
+	}
+
+	producerCfg, err := env.NewOrderProduceConfig()
+	if err != nil {
+		return err
+	}
+
+	appConfig = &config{
+		Logger:        loggerCfg,
+		Kafka:         kafkaCfg,
+		OrderConsumer: consumerCfg,
+		OrderProducer: producerCfg,
+	}
+
+	return nil
+}
+
+func AppConfig() *config {
+	return appConfig
+}
