@@ -1,0 +1,36 @@
+package env
+
+import (
+	"github.com/IBM/sarama"
+	"github.com/caarlos0/env/v11"
+)
+
+type assemblyConsumerEnvConfig struct {
+	Topic   string `env:"SHIP_ASSEMBLED_TOPIC_NAME,required"`
+	GroupID string `env:"SHIP_ASSEMBLED_CONSUMER_GROUP_ID,required"`
+}
+
+type assemblyConsumerConfig struct {
+	raw assemblyConsumerEnvConfig
+}
+
+func NewAssemblyConsumerConfig() (*assemblyConsumerConfig, error) {
+	var raw assemblyConsumerEnvConfig
+	if err := env.Parse(&raw); err != nil {
+		return nil, err
+	}
+
+	return &assemblyConsumerConfig{raw: raw}, nil
+}
+
+func (cfg *assemblyConsumerConfig) Topic() string {
+	return cfg.raw.Topic
+}
+
+func (cfg *assemblyConsumerConfig) GroupID() string {
+	return cfg.raw.GroupID
+}
+
+func (cfg *assemblyConsumerConfig) Config() *sarama.Config {
+	return newConsumerSaramaConfig()
+}

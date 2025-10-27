@@ -70,6 +70,8 @@ func (s *ServiceSuite) TestPayOrderSuccess() {
 			order.Status == vo.OrderStatusPAID
 	})).Return(nil)
 
+	s.orderProducer.On("PublishOrderPaid", s.ctx, mock.Anything).Return(nil)
+
 	order, err := s.service.Pay(s.ctx, payOrderRequest)
 
 	s.Require().NoError(err)

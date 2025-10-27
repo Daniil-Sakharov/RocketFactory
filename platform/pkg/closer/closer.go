@@ -29,35 +29,28 @@ type Closer struct {
 	logger Logger
 }
 
-// Глобальный экземпляр для использования по всему приложению
 var globalCloser = NewWithLogger(&logger.NoopLogger{})
 
-// AddNamed добавляет функцию закрытия с именем зависимости для логирования в глобальный closer
 func AddNamed(name string, f func(context.Context) error) {
 	globalCloser.AddNamed(name, f)
 }
 
-// Add добавляет функции закрытия в глобальный closer
 func Add(f ...func(context.Context) error) {
 	globalCloser.Add(f...)
 }
 
-// CloseAll инициирует процесс закрытия всех зарегистрированных функций глобального closer'а
 func CloseAll(ctx context.Context) error {
 	return globalCloser.CloseAll(ctx)
 }
 
-// SetLogger позволяет установить кастомный логгер для глобального closer'а
 func SetLogger(l Logger) {
 	globalCloser.SetLogger(l)
 }
 
-// Configure настраивает глобальный closer для обработки системных сигналов
 func Configure(signals ...os.Signal) {
 	go globalCloser.handleSignals(signals...)
 }
 
-// New создаёт новый экземпляр Closer с дефолтным логгером log.Default()
 func New(signals ...os.Signal) *Closer {
 	return NewWithLogger(logger.Logger(), signals...)
 }

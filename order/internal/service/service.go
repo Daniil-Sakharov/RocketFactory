@@ -13,3 +13,11 @@ type OrderService interface {
 	Get(ctx context.Context, req *dto.GetOrderRequest) (*domain.Order, error)
 	Cancel(ctx context.Context, req *dto.CancelOrderRequest) error
 }
+
+type AssemblyConsumerService interface {
+	RunConsumer(ctx context.Context) error
+}
+
+type OrderProducerService interface {
+	PublishOrderPaid(ctx context.Context, event *domain.OrderProduceEvent) error
+}

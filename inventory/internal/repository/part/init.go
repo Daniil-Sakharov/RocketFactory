@@ -5,10 +5,12 @@ import (
 	"time"
 
 	repoModel "github.com/Daniil-Sakharov/RocketFactory/inventory/internal/repository/model"
+	"github.com/Daniil-Sakharov/RocketFactory/platform/pkg/logger"
 )
 
-func (r *repository) InitTestData() {
+func (r *repository) InitTestData(ctx context.Context) {
 	now := time.Now()
+	logger.Info(ctx, "❗️ Init TestData")
 
 	// Тестовые данные
 	testParts := []repoModel.Part{
@@ -277,9 +279,10 @@ func (r *repository) InitTestData() {
 	}
 
 	for _, part := range testParts {
-		_, err := r.collection.InsertOne(context.Background(), part)
+		_, err := r.collection.InsertOne(ctx, part)
 		if err != nil {
 			return
 		}
 	}
+	logger.Info(ctx, "🎉 Test Data successfully init")
 }
