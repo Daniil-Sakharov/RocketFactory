@@ -12,7 +12,7 @@ type service struct {
 	orderRepository repository.OrderRepository
 	inventoryClient client.InventoryClient
 	paymentClient   client.PaymentClient
-	orderProducer def.OrderProducerService
+	orderProducer   def.OrderProducerService
 }
 
 func NewService(
@@ -25,6 +25,6 @@ func NewService(
 		orderRepository: orderRepository,
 		inventoryClient: inventoryClient,
 		paymentClient:   paymentClient,
-		orderProducer: orderProducer,
+		orderProducer:   orderProducer,
 	}
 }

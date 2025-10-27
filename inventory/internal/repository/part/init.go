@@ -2,10 +2,10 @@ package part
 
 import (
 	"context"
-	"github.com/Daniil-Sakharov/RocketFactory/platform/pkg/logger"
 	"time"
 
 	repoModel "github.com/Daniil-Sakharov/RocketFactory/inventory/internal/repository/model"
+	"github.com/Daniil-Sakharov/RocketFactory/platform/pkg/logger"
 )
 
 func (r *repository) InitTestData(ctx context.Context) {
@@ -279,7 +279,7 @@ func (r *repository) InitTestData(ctx context.Context) {
 	}
 
 	for _, part := range testParts {
-		_, err := r.collection.InsertOne(context.Background(), part)
+		_, err := r.collection.InsertOne(ctx, part)
 		if err != nil {
 			return
 		}

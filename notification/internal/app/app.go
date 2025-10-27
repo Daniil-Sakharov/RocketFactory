@@ -2,11 +2,13 @@ package app
 
 import (
 	"context"
+
+	"github.com/pkg/errors"
+	"go.uber.org/zap"
+
 	"github.com/Daniil-Sakharov/RocketFactory/notification/internal/config"
 	"github.com/Daniil-Sakharov/RocketFactory/platform/pkg/closer"
 	"github.com/Daniil-Sakharov/RocketFactory/platform/pkg/logger"
-	"github.com/pkg/errors"
-	"go.uber.org/zap"
 )
 
 type App struct {
@@ -75,7 +77,6 @@ func (a *App) Run(ctx context.Context) error {
 
 	return nil
 }
-
 
 func (a *App) initDI(_ context.Context) error {
 	a.diContainer = NewDiContainer()

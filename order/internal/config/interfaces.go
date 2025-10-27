@@ -1,8 +1,9 @@
 package config
 
 import (
-	"github.com/IBM/sarama"
 	"time"
+
+	"github.com/IBM/sarama"
 )
 
 type LoggerConfig interface {
@@ -35,12 +36,12 @@ type KafkaConfig interface {
 	Brokers() []string
 }
 
-type OrderProducerConfig interface{
+type OrderProducerConfig interface {
 	Topic() string
 	Config() *sarama.Config
 }
 
-type AssemblyConsumerConfig interface{
+type AssemblyConsumerConfig interface {
 	Topic() string
 	GroupID() string
 	Config() *sarama.Config

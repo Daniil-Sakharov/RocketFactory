@@ -5,12 +5,12 @@ import (
 	"github.com/caarlos0/env/v11"
 )
 
-type assemblyConsumerEnvConfig struct{
-	Topic string `env:"SHIP_ASSEMBLED_TOPIC_NAME,required"`
+type assemblyConsumerEnvConfig struct {
+	Topic   string `env:"SHIP_ASSEMBLED_TOPIC_NAME,required"`
 	GroupID string `env:"SHIP_ASSEMBLED_CONSUMER_GROUP_ID,required"`
 }
 
-type assemblyConsumerConfig struct{
+type assemblyConsumerConfig struct {
 	raw assemblyConsumerEnvConfig
 }
 
@@ -32,10 +32,5 @@ func (cfg *assemblyConsumerConfig) GroupID() string {
 }
 
 func (cfg *assemblyConsumerConfig) Config() *sarama.Config {
-	config := sarama.NewConfig()
-	config.Version = sarama.V4_0_0_0
-	config.Consumer.Group.Rebalance.GroupStrategies = []sarama.BalanceStrategy{sarama.NewBalanceStrategyRoundRobin()}
-	config.Consumer.Offsets.Initial = sarama.OffsetOldest
-
-	return config
+	return newConsumerSaramaConfig()
 }

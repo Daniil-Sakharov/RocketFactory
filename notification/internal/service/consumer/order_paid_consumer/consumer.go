@@ -2,11 +2,13 @@ package order_paid_consumer
 
 import (
 	"context"
+
+	"go.uber.org/zap"
+
 	kafkaConverter "github.com/Daniil-Sakharov/RocketFactory/notification/internal/converter/kafka"
 	serv "github.com/Daniil-Sakharov/RocketFactory/notification/internal/service"
 	"github.com/Daniil-Sakharov/RocketFactory/platform/pkg/kafka"
 	"github.com/Daniil-Sakharov/RocketFactory/platform/pkg/logger"
-	"go.uber.org/zap"
 )
 
 var _ serv.OrderPaidConsumerService = (*service)(nil)
@@ -14,7 +16,7 @@ var _ serv.OrderPaidConsumerService = (*service)(nil)
 type service struct {
 	orderPaidConsumer kafka.Consumer
 	orderPaidDecoder  kafkaConverter.OrderDecoder
-	telegramService      serv.TelegramService
+	telegramService   serv.TelegramService
 }
 
 func NewService(

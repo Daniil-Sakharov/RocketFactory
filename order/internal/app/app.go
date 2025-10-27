@@ -3,9 +3,10 @@ package app
 import (
 	"context"
 	"fmt"
+	"net/http"
+
 	"github.com/pkg/errors"
 	"go.uber.org/zap"
-	"net/http"
 
 	"github.com/Daniil-Sakharov/RocketFactory/order/internal/config"
 	"github.com/Daniil-Sakharov/RocketFactory/platform/pkg/closer"

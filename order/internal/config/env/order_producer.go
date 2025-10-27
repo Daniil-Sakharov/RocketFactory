@@ -5,11 +5,11 @@ import (
 	"github.com/caarlos0/env/v11"
 )
 
-type orderProducerEnvConfig struct{
+type orderProducerEnvConfig struct {
 	TopicName string `env:"PRODUCE_TOPIC_NAME"`
 }
 
-type orderProducerConfig struct{
+type orderProducerConfig struct {
 	raw orderProducerEnvConfig
 }
 

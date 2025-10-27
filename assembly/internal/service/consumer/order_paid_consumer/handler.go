@@ -4,9 +4,10 @@ import (
 	"context"
 	"errors"
 
+	"go.uber.org/zap"
+
 	"github.com/Daniil-Sakharov/RocketFactory/platform/pkg/kafka/consumer"
 	"github.com/Daniil-Sakharov/RocketFactory/platform/pkg/logger"
-	"go.uber.org/zap"
 )
 
 func (s *service) handleOrderPaid(ctx context.Context, msg consumer.Message) error {

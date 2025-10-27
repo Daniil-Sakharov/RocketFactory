@@ -3,10 +3,12 @@ package ship_assembly_consumer
 import (
 	"context"
 	"errors"
+
+	"go.uber.org/zap"
+
 	converter "github.com/Daniil-Sakharov/RocketFactory/notification/internal/converter/telegram"
 	"github.com/Daniil-Sakharov/RocketFactory/platform/pkg/kafka/consumer"
 	"github.com/Daniil-Sakharov/RocketFactory/platform/pkg/logger"
-	"go.uber.org/zap"
 )
 
 func (s *service) handleShipAssembly(ctx context.Context, msg consumer.Message) error {
@@ -26,7 +28,7 @@ func (s *service) handleShipAssembly(ctx context.Context, msg consumer.Message) 
 		zap.Any("offset", msg.Offset),
 		zap.String("event_uuid", event.EventUUID),
 		zap.String("order_uuid", event.OrderUUID),
-		zap.String("build_time_sec", event.BuildTimeSec.String()),
+		zap.Int("build_time_sec", int(event.BuildTime.Seconds())),
 	)
 
 	err = s.telegramService.SendShipAssembledNotification(ctx, converter.ShipAssembledEventToTemplateData(&event))

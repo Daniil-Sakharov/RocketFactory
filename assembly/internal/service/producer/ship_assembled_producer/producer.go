@@ -3,13 +3,14 @@ package ship_assembled_producer
 import (
 	"context"
 
+	"go.uber.org/zap"
+	"google.golang.org/protobuf/proto"
+
 	"github.com/Daniil-Sakharov/RocketFactory/assembly/internal/model"
 	def "github.com/Daniil-Sakharov/RocketFactory/assembly/internal/service"
 	"github.com/Daniil-Sakharov/RocketFactory/platform/pkg/kafka"
 	"github.com/Daniil-Sakharov/RocketFactory/platform/pkg/logger"
 	eventsv1 "github.com/Daniil-Sakharov/RocketFactory/shared/pkg/proto/events/v1"
-	"go.uber.org/zap"
-	"google.golang.org/protobuf/proto"
 )
 
 var _ def.ShipAssembledProducerService = (*service)(nil)
@@ -29,7 +30,7 @@ func (s *service) PublishShipAssembled(ctx context.Context, event *model.ShipAss
 		EventUuid:    event.EventUUID,
 		OrderUuid:    event.OrderUUID,
 		UserUuid:     event.UserUUID,
-		BuildTimeSec: int64(event.BuildTimeSec.Seconds()),
+		BuildTimeSec: int64(event.BuildTime.Seconds()),
 	}
 
 	payload, err := proto.Marshal(msg)
@@ -47,7 +48,7 @@ func (s *service) PublishShipAssembled(ctx context.Context, event *model.ShipAss
 	logger.Info(ctx, "📤 ShipAssembled event published",
 		zap.String("event_uuid", event.EventUUID),
 		zap.String("order_uuid", event.OrderUUID),
-		zap.Int64("build_time_sec", int64(event.BuildTimeSec.Seconds())),
+		zap.Int64("build_time_sec", int64(event.BuildTime.Seconds())),
 	)
 
 	return nil

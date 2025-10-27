@@ -5,11 +5,11 @@ import (
 	"github.com/caarlos0/env/v11"
 )
 
-type assemblyProducerEnvConfig struct{
+type assemblyProducerEnvConfig struct {
 	TopicName string `env:"PRODUCE_TOPIC_NAME,required"`
 }
 
-type assemblyProducerConfig struct{
+type assemblyProducerConfig struct {
 	raw assemblyProducerEnvConfig
 }
 

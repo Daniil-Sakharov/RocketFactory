@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/IBM/sarama"
+
 	"github.com/Daniil-Sakharov/RocketFactory/assembly/internal/config"
 	kafkaConverter "github.com/Daniil-Sakharov/RocketFactory/assembly/internal/converter/kafka"
 	"github.com/Daniil-Sakharov/RocketFactory/assembly/internal/converter/kafka/decoder"
@@ -17,7 +19,6 @@ import (
 	wrappedKafkaProducer "github.com/Daniil-Sakharov/RocketFactory/platform/pkg/kafka/producer"
 	"github.com/Daniil-Sakharov/RocketFactory/platform/pkg/logger"
 	kafkaMiddleware "github.com/Daniil-Sakharov/RocketFactory/platform/pkg/middleware/kafka"
-	"github.com/IBM/sarama"
 )
 
 type diContainer struct {
@@ -105,7 +106,7 @@ func (d *diContainer) SyncProducer() sarama.SyncProducer {
 			config.AppConfig().OrderProducer.Config(),
 		)
 		if err != nil {
-			panic(fmt.Sprintf("failed to create sync producer"))
+			panic("failed to create sync producer: " + err.Error())
 		}
 		closer.AddNamed("Kafka sync producer", func(ctx context.Context) error {
 			return p.Close()

@@ -3,10 +3,12 @@ package assembly_consumer
 import (
 	"context"
 	"errors"
+
+	"go.uber.org/zap"
+
 	"github.com/Daniil-Sakharov/RocketFactory/order/internal/model/vo"
 	"github.com/Daniil-Sakharov/RocketFactory/platform/pkg/kafka/consumer"
 	"github.com/Daniil-Sakharov/RocketFactory/platform/pkg/logger"
-	"go.uber.org/zap"
 )
 
 func (s *service) orderHandler(ctx context.Context, msg consumer.Message) error {
@@ -28,7 +30,7 @@ func (s *service) orderHandler(ctx context.Context, msg consumer.Message) error 
 		zap.String("event_uuid", event.EventUUID),
 		zap.String("order_uuid", event.OrderUUID),
 		zap.String("user_uuid", event.UserUUID),
-		zap.String("build_time_sec", event.BuildTimeSec.String()),
+		zap.Int("build_time_sec", int(event.BuildTime.Seconds())),
 	)
 
 	order, err := s.orderRepository.Get(ctx, event.OrderUUID)

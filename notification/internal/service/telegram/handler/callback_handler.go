@@ -3,11 +3,12 @@ package handler
 import (
 	"context"
 
-	"github.com/Daniil-Sakharov/RocketFactory/notification/internal/service/telegram/message"
-	"github.com/Daniil-Sakharov/RocketFactory/platform/pkg/logger"
 	"github.com/go-telegram/bot"
 	"github.com/go-telegram/bot/models"
 	"go.uber.org/zap"
+
+	"github.com/Daniil-Sakharov/RocketFactory/notification/internal/service/telegram/message"
+	"github.com/Daniil-Sakharov/RocketFactory/platform/pkg/logger"
 )
 
 var _ CallbackHandler = (*ButtonCallbackHandler)(nil)
@@ -59,7 +60,6 @@ func (h *ButtonCallbackHandler) HandleCallback(ctx context.Context, b *bot.Bot, 
 		Text:      responseText,
 		ParseMode: "Markdown",
 	})
-
 	if err != nil {
 		logger.Error(ctx, "Failed to send callback response", zap.Error(err))
 	}

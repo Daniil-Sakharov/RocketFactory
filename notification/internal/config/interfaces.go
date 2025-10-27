@@ -2,25 +2,25 @@ package config
 
 import "github.com/IBM/sarama"
 
-type LoggerConfig interface{
+type LoggerConfig interface {
 	Level() string
 	AsJson() bool
 }
 
-type TelegramBotConfig interface{
+type TelegramBotConfig interface {
 	Token() string
 }
 
-type KafkaConfig interface{
+type KafkaConfig interface {
 	Brokers() []string
 }
 
-type OrderConsumerConfig interface{
+type OrderConsumerConfig interface {
 	Topic() string
 	GroupID() string
 	Config() *sarama.Config
 }
-type AssemblyConsumerConfig interface{
+type AssemblyConsumerConfig interface {
 	Topic() string
 	GroupID() string
 	Config() *sarama.Config

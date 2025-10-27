@@ -2,11 +2,11 @@ package env
 
 import "github.com/caarlos0/env/v11"
 
-type kafkaEnvConfig struct{
+type kafkaEnvConfig struct {
 	Brokers []string `env:"KAFKA_BROKERS,required"`
 }
 
-type kafkaConfig struct{
+type kafkaConfig struct {
 	raw kafkaEnvConfig
 }
 

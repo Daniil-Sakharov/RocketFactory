@@ -3,13 +3,8 @@ package app
 import (
 	"context"
 	"fmt"
-	kafkaConverter "github.com/Daniil-Sakharov/RocketFactory/order/internal/converter/kafka"
-	"github.com/Daniil-Sakharov/RocketFactory/order/internal/converter/kafka/decoder"
-	wrappedKafka "github.com/Daniil-Sakharov/RocketFactory/platform/pkg/kafka"
-	"github.com/Daniil-Sakharov/RocketFactory/platform/pkg/logger"
-	kafkaMiddleware "github.com/Daniil-Sakharov/RocketFactory/platform/pkg/middleware/kafka"
-	"github.com/IBM/sarama"
 
+	"github.com/IBM/sarama"
 	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/jmoiron/sqlx"
 	"google.golang.org/grpc"
@@ -20,6 +15,8 @@ import (
 	inventoryClient "github.com/Daniil-Sakharov/RocketFactory/order/internal/client/grpc/inventory/v1"
 	paymentClient "github.com/Daniil-Sakharov/RocketFactory/order/internal/client/grpc/payment/v1"
 	"github.com/Daniil-Sakharov/RocketFactory/order/internal/config"
+	kafkaConverter "github.com/Daniil-Sakharov/RocketFactory/order/internal/converter/kafka"
+	"github.com/Daniil-Sakharov/RocketFactory/order/internal/converter/kafka/decoder"
 	"github.com/Daniil-Sakharov/RocketFactory/order/internal/repository"
 	orderRepo "github.com/Daniil-Sakharov/RocketFactory/order/internal/repository/order"
 	"github.com/Daniil-Sakharov/RocketFactory/order/internal/service"
@@ -27,8 +24,11 @@ import (
 	orderService "github.com/Daniil-Sakharov/RocketFactory/order/internal/service/order"
 	orderProducer "github.com/Daniil-Sakharov/RocketFactory/order/internal/service/producer/order_producer"
 	"github.com/Daniil-Sakharov/RocketFactory/platform/pkg/closer"
+	wrappedKafka "github.com/Daniil-Sakharov/RocketFactory/platform/pkg/kafka"
 	wrappedKafkaConsumer "github.com/Daniil-Sakharov/RocketFactory/platform/pkg/kafka/consumer"
 	wrappedKafkaProducer "github.com/Daniil-Sakharov/RocketFactory/platform/pkg/kafka/producer"
+	"github.com/Daniil-Sakharov/RocketFactory/platform/pkg/logger"
+	kafkaMiddleware "github.com/Daniil-Sakharov/RocketFactory/platform/pkg/middleware/kafka"
 	"github.com/Daniil-Sakharov/RocketFactory/platform/pkg/migrator"
 	"github.com/Daniil-Sakharov/RocketFactory/platform/pkg/migrator/pg"
 	orderV1 "github.com/Daniil-Sakharov/RocketFactory/shared/pkg/openapi/order/v1"
@@ -113,7 +113,7 @@ func (d *diContainer) AssemblyConsumerService(ctx context.Context) service.Assem
 			d.AssemblyDecoder(),
 			d.OrderService(ctx),
 			d.OrderRepository(ctx),
-			)
+		)
 	}
 	return d.assemblyConsumerService
 }
@@ -122,12 +122,12 @@ func (d *diContainer) AssemblyConsumer() wrappedKafka.Consumer {
 	if d.assemblyConsumer == nil {
 		d.assemblyConsumer = wrappedKafkaConsumer.NewConsumer(
 			d.ConsumerGroup(),
-			[]string {
+			[]string{
 				config.AppConfig().OrderProducer.Topic(),
 			},
 			logger.Logger(),
 			kafkaMiddleware.Logging(logger.Logger()),
-			)
+		)
 	}
 	return d.assemblyConsumer
 }
@@ -138,7 +138,7 @@ func (d *diContainer) ConsumerGroup() sarama.ConsumerGroup {
 			config.AppConfig().Kafka.Brokers(),
 			config.AppConfig().AssemblyConsumer.GroupID(),
 			config.AppConfig().AssemblyConsumer.Config(),
-			)
+		)
 		if err != nil {
 			panic(fmt.Sprintf("failed to create consumer group: %s\n", err.Error()))
 		}
@@ -171,7 +171,7 @@ func (d *diContainer) OrderProducer() wrappedKafka.Producer {
 			d.SyncProducer(),
 			config.AppConfig().OrderProducer.Topic(),
 			logger.Logger(),
-			)
+		)
 	}
 	return d.orderProducer
 }
@@ -181,11 +181,11 @@ func (d *diContainer) SyncProducer() sarama.SyncProducer {
 		p, err := sarama.NewSyncProducer(
 			config.AppConfig().Kafka.Brokers(),
 			config.AppConfig().OrderProducer.Config(),
-			)
+		)
 		if err != nil {
-			panic(fmt.Sprintf("failed to create sync producer"))
+			panic("failed to create sync producer: " + err.Error())
 		}
-		closer.AddNamed("Kafka sync producer", func(ctx context.Context) error{
+		closer.AddNamed("Kafka sync producer", func(ctx context.Context) error {
 			return p.Close()
 		})
 
