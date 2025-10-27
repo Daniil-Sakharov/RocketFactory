@@ -2,10 +2,10 @@ go 1.24.5
 
 use (
 	./assembly
+	./notification
 	./inventory
 	./order
 	./payment
 	./shared
 	./platform
-	notification
 )
