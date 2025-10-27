@@ -6,21 +6,25 @@ WORKDIR /app
 
 COPY go.work go.work.sum ./
 
+COPY assembly/go.mod assembly/go.sum ./assembly/
 COPY platform/go.mod platform/go.sum ./platform/
 COPY shared/go.mod shared/go.sum ./shared/
 COPY order/go.mod order/go.sum ./order/
 COPY inventory/go.mod inventory/go.sum ./inventory/
 COPY payment/go.mod payment/go.sum ./payment/
+COPY notification/go.mod notification/go.sum ./notification/
 
 # Скачиваем зависимости ПЕРЕД копированием исходников
 # Этот слой будет закеширован, пока go.mod не изменится!
 RUN go mod download
 
+COPY assembly ./assembly
 COPY platform ./platform
 COPY shared ./shared
 COPY order ./order
 COPY inventory ./inventory
 COPY payment ./payment
+COPY notification ./notification
 
 ADD https://github.com/grpc-ecosystem/grpc-health-probe/releases/download/v0.4.37/grpc_health_probe-linux-amd64 ./grpc-health-probe
 
