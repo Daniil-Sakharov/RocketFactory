@@ -5,8 +5,8 @@ import (
 	"errors"
 
 	"github.com/Daniil-Sakharov/RocketFactory/order/internal/model"
-	"github.com/Daniil-Sakharov/RocketFactory/order/internal/model/dto"
 	"github.com/Daniil-Sakharov/RocketFactory/order/internal/model/vo"
+	"github.com/Daniil-Sakharov/RocketFactory/order/internal/service/dto"
 )
 
 func (s *service) Cancel(ctx context.Context, req *dto.CancelOrderRequest) error {

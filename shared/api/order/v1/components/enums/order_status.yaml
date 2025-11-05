@@ -2,11 +2,13 @@ type: string
 enum:
   - PENDING_PAYMENT
   - PAID
+  - ASSEMBLED
   - CANCELLED
 default: PENDING_PAYMENT
 description: |
   Статус заказа:
-  * PENDING_PAYMENT - заказа создан и ожидает оплаты
+  * PENDING_PAYMENT - заказ создан и ожидает оплаты
   * PAID - заказ успешно оплачен
+  * ASSEMBLED - заказ собран и готов к отправке
   * CANCELLED - заказ отменен
 example: PENDING_PAYMENT

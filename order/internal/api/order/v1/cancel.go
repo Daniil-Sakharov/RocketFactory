@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/Daniil-Sakharov/RocketFactory/order/internal/converter"
-	"github.com/Daniil-Sakharov/RocketFactory/order/pkg/apierrors"
+	api2 "github.com/Daniil-Sakharov/RocketFactory/order/internal/converter/api"
 	orderV1 "github.com/Daniil-Sakharov/RocketFactory/shared/pkg/openapi/order/v1"
 )
 
@@ -12,8 +12,8 @@ func (a *api) CancelOrder(ctx context.Context, params orderV1.CancelOrderParams)
 	uuid := converter.CancelOrderRequestToServiceModel(params.OrderUUID.String())
 	err := a.service.Cancel(ctx, uuid)
 	if err != nil {
-		return apierrors.MapToCancelOrderError(err), nil
+		return api2.MapToCancelOrderError(err), nil
 	}
 
-	return apierrors.MapToCancelOrderError(err), nil
+	return api2.MapToCancelOrderError(err), nil
 }

@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"log"
 
 	"github.com/Daniil-Sakharov/RocketFactory/order/internal/model"
 	"github.com/Daniil-Sakharov/RocketFactory/order/internal/model/domain"
@@ -23,8 +22,12 @@ func (r *repository) Update(ctx context.Context, order *domain.Order) error {
 	}
 
 	defer func() {
-		if err = tx.Rollback(); err != nil && !errors.Is(err, sql.ErrTxDone) {
-			log.Printf("rollback error: %v\n", err)
+		if err != nil {
+			if rbErr := tx.Rollback(); rbErr != nil {
+				if !errors.Is(rbErr, sql.ErrTxDone) {
+					err = fmt.Errorf("tx rollback failed: %w", err)
+				}
+			}
 		}
 	}()
 

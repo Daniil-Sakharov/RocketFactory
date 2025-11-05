@@ -128,6 +128,10 @@ func (s *Server) handleCancelOrderRequest(args [1]string, argsEscaped bool, w ht
 					Name: "order_uuid",
 					In:   "path",
 				}: params.OrderUUID,
+				{
+					Name: "X-Session-Uuid",
+					In:   "header",
+				}: params.XSessionUUID,
 			},
 			Raw: r,
 		}
@@ -242,6 +246,16 @@ func (s *Server) handleCreateOrderRequest(args [0]string, argsEscaped bool, w ht
 			ID:   "CreateOrder",
 		}
 	)
+	params, err := decodeCreateOrderParams(args, argsEscaped, r)
+	if err != nil {
+		err = &ogenerrors.DecodeParamsError{
+			OperationContext: opErrContext,
+			Err:              err,
+		}
+		defer recordError("DecodeParams", err)
+		s.cfg.ErrorHandler(ctx, w, r, err)
+		return
+	}
 	request, close, err := s.decodeCreateOrderRequest(r)
 	if err != nil {
 		err = &ogenerrors.DecodeRequestError{
@@ -266,13 +280,18 @@ func (s *Server) handleCreateOrderRequest(args [0]string, argsEscaped bool, w ht
 			OperationSummary: "Создание заказа",
 			OperationID:      "CreateOrder",
 			Body:             request,
-			Params:           middleware.Parameters{},
-			Raw:              r,
+			Params: middleware.Parameters{
+				{
+					Name: "X-Session-Uuid",
+					In:   "header",
+				}: params.XSessionUUID,
+			},
+			Raw: r,
 		}
 
 		type (
 			Request  = *CreateOrderRequest
-			Params   = struct{}
+			Params   = CreateOrderParams
 			Response = CreateOrderRes
 		)
 		response, err = middleware.HookMiddleware[
@@ -282,14 +301,14 @@ func (s *Server) handleCreateOrderRequest(args [0]string, argsEscaped bool, w ht
 		](
 			m,
 			mreq,
-			nil,
+			unpackCreateOrderParams,
 			func(ctx context.Context, request Request, params Params) (response Response, err error) {
-				response, err = s.h.CreateOrder(ctx, request)
+				response, err = s.h.CreateOrder(ctx, request, params)
 				return response, err
 			},
 		)
 	} else {
-		response, err = s.h.CreateOrder(ctx, request)
+		response, err = s.h.CreateOrder(ctx, request, params)
 	}
 	if err != nil {
 		defer recordError("Internal", err)
@@ -404,6 +423,10 @@ func (s *Server) handleGetOrderRequest(args [1]string, argsEscaped bool, w http.
 					Name: "order_uuid",
 					In:   "path",
 				}: params.OrderUUID,
+				{
+					Name: "X-Session-Uuid",
+					In:   "header",
+				}: params.XSessionUUID,
 			},
 			Raw: r,
 		}
@@ -557,6 +580,10 @@ func (s *Server) handlePayOrderRequest(args [1]string, argsEscaped bool, w http.
 					Name: "order_uuid",
 					In:   "path",
 				}: params.OrderUUID,
+				{
+					Name: "X-Session-Uuid",
+					In:   "header",
+				}: params.XSessionUUID,
 			},
 			Raw: r,
 		}

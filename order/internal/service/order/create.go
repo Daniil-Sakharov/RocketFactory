@@ -9,8 +9,8 @@ import (
 
 	"github.com/Daniil-Sakharov/RocketFactory/order/internal/model"
 	"github.com/Daniil-Sakharov/RocketFactory/order/internal/model/domain"
-	"github.com/Daniil-Sakharov/RocketFactory/order/internal/model/dto"
 	"github.com/Daniil-Sakharov/RocketFactory/order/internal/model/vo"
+	"github.com/Daniil-Sakharov/RocketFactory/order/internal/service/dto"
 )
 
 func (s *service) Create(ctx context.Context, req *dto.CreateOrderRequest) (*domain.Order, error) {

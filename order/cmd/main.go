@@ -7,7 +7,6 @@ import (
 	"syscall"
 	"time"
 
-	_ "github.com/jackc/pgx/v5/stdlib"
 	"go.uber.org/zap"
 
 	"github.com/Daniil-Sakharov/RocketFactory/order/internal/app"

@@ -2,6 +2,7 @@ go 1.24.5
 
 use (
 	./assembly
+	./auth
 	./notification
 	./inventory
 	./order
