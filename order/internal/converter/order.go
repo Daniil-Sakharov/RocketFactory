@@ -4,16 +4,15 @@ import (
 	"github.com/google/uuid"
 
 	"github.com/Daniil-Sakharov/RocketFactory/order/internal/model/domain"
-	"github.com/Daniil-Sakharov/RocketFactory/order/internal/model/dto"
 	"github.com/Daniil-Sakharov/RocketFactory/order/internal/model/vo"
-	"github.com/Daniil-Sakharov/RocketFactory/order/pkg/utils"
+	"github.com/Daniil-Sakharov/RocketFactory/order/internal/service/dto"
 	orderV1 "github.com/Daniil-Sakharov/RocketFactory/shared/pkg/openapi/order/v1"
 )
 
 func CreateOrderRequestToServiceModel(req orderV1.CreateOrderRequest) *dto.CreateOrderRequest {
 	return &dto.CreateOrderRequest{
 		UserUUID:  req.UserUUID.String(),
-		PartUUIDs: utils.UuidsToStrings(req.PartUuids),
+		PartUUIDs: UuidsToStrings(req.PartUuids),
 	}
 }
 
@@ -93,6 +92,8 @@ func OrderStatusToOpenAPI(status vo.OrderStatus) orderV1.OrderStatus {
 		return orderV1.OrderStatusPENDINGPAYMENT
 	case vo.OrderStatusPAID:
 		return orderV1.OrderStatusPAID
+	case vo.OrderStatusASSEMBLED:
+		return orderV1.OrderStatusASSEMBLED
 	case vo.OrderStatusCANCELLED:
 		return orderV1.OrderStatusCANCELLED
 	default:
@@ -106,6 +107,8 @@ func OrderStatusFromOpenAPI(status orderV1.OrderStatus) vo.OrderStatus {
 		return vo.OrderStatusPENDINGPAYMENT
 	case orderV1.OrderStatusPAID:
 		return vo.OrderStatusPAID
+	case orderV1.OrderStatusASSEMBLED:
+		return vo.OrderStatusASSEMBLED
 	case orderV1.OrderStatusCANCELLED:
 		return vo.OrderStatusCANCELLED
 	default:

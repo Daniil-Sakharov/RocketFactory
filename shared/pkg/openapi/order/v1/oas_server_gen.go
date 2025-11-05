@@ -19,7 +19,7 @@ type Handler interface {
 	// Создает новый заказ который выбрал пользователь.
 	//
 	// POST /api/v1/orders
-	CreateOrder(ctx context.Context, req *CreateOrderRequest) (CreateOrderRes, error)
+	CreateOrder(ctx context.Context, req *CreateOrderRequest, params CreateOrderParams) (CreateOrderRes, error)
 	// GetOrder implements getOrder operation.
 	//
 	// Возвращает информацию о заказе.

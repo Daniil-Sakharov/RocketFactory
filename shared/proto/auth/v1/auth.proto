@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+package auth.v1;
+
+import "common/v1/user.proto";
+
+option go_package = "github.com/Daniil-Sakharov/RocketFactory/shared/pkg/proto/auth/v1;auth_v1";
+
+// AuthService - Сервис для управления аутентификацией и сессиями
+service AuthService {
+  // Login - Аутентификация пользователя по логину и паролю
+  // Возвращает session_uuid для последующих запросов
+  rpc Login(LoginRequest) returns (LoginResponse);
+
+  // Whoami - Получение информации о текущем пользователе по session_uuid
+  // Используется для валидации сессий в middleware/interceptors
+  rpc Whoami(WhoamiRequest) returns (WhoamiResponse);
+}
+
+// LoginRequest - Запрос на аутентификацию
+message LoginRequest {
+  // Логин пользователя
+  string login = 1;
+  // Пароль пользователя (будет хешироваться с использованием bcrypt)
+  string password = 2;
+}
+
+// LoginResponse - Ответ после успешной аутентификации
+message LoginResponse {
+  // UUID сессии, который нужно сохранить на клиенте
+  // Используется для всех последующих запросов
+  string session_uuid = 1;
+}
+
+// WhoamiRequest - Запрос информации о текущем пользователе
+message WhoamiRequest {
+  // UUID сессии (получен из Login)
+  string session_uuid = 1;
+}
+
+// WhoamiResponse - Информация о пользователе
+message WhoamiResponse {
+  // Информация о пользователе (использует общий тип из common)
+  common.v1.User user = 1;
+}

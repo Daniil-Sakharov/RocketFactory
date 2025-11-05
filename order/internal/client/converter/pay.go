@@ -1,8 +1,8 @@
 package converter
 
 import (
-	"github.com/Daniil-Sakharov/RocketFactory/order/internal/model/dto"
 	"github.com/Daniil-Sakharov/RocketFactory/order/internal/model/vo"
+	"github.com/Daniil-Sakharov/RocketFactory/order/internal/service/dto"
 	paymentv1 "github.com/Daniil-Sakharov/RocketFactory/shared/pkg/proto/payment/v1"
 )
 

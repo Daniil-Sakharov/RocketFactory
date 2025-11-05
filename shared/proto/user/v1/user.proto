@@ -1,0 +1,49 @@
+syntax = "proto3";
+
+package user.v1;
+
+import "common/v1/user.proto";
+
+option go_package = "github.com/Daniil-Sakharov/RocketFactory/shared/pkg/proto/user/v1;user_v1";
+
+// UserService - Сервис для управления пользователями
+service UserService {
+  // Register - Регистрация нового пользователя
+  // Пароль будет захеширован с использованием bcrypt перед сохранением
+  rpc Register(RegisterRequest) returns (RegisterResponse);
+
+  // GetUser - Получение информации о пользователе по UUID
+  rpc GetUser(GetUserRequest) returns (GetUserResponse);
+}
+
+// RegisterRequest - Запрос на регистрацию нового пользователя
+message RegisterRequest {
+  // Логин пользователя (уникальный)
+  string login = 1;
+  // Пароль пользователя (будет захеширован на сервере)
+  string password = 2;
+  // Email пользователя (уникальный)
+  string email = 3;
+  // Методы уведомлений (Telegram, Email, SMS и т.д.)
+  repeated common.v1.NotificationMethod notification_methods = 4;
+}
+
+// RegisterResponse - Ответ после успешной регистрации
+message RegisterResponse {
+  // UUID созданного пользователя
+  string user_uuid = 1;
+}
+
+// GetUserRequest - Запрос информации о пользователе
+message GetUserRequest {
+  // UUID пользователя
+  string user_uuid = 1;
+}
+
+// GetUserResponse - Информация о пользователе
+message GetUserResponse {
+  // Информация о пользователе (использует общий тип из common)
+  common.v1.User user = 1;
+  // Методы уведомлений
+  repeated common.v1.NotificationMethod notification_methods = 2;
+}

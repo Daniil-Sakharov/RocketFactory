@@ -8,6 +8,7 @@ COPY go.work go.work.sum ./
 
 COPY assembly/go.mod assembly/go.sum ./assembly/
 COPY platform/go.mod platform/go.sum ./platform/
+COPY auth/go.mod auth/go.sum ./auth/
 COPY shared/go.mod shared/go.sum ./shared/
 COPY order/go.mod order/go.sum ./order/
 COPY inventory/go.mod inventory/go.sum ./inventory/
@@ -20,6 +21,7 @@ RUN go mod download
 
 COPY assembly ./assembly
 COPY platform ./platform
+COPY auth ./auth
 COPY shared ./shared
 COPY order ./order
 COPY inventory ./inventory

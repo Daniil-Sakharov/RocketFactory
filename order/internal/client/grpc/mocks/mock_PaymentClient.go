@@ -7,7 +7,7 @@ package mocks
 import (
 	context "context"
 
-	dto "github.com/Daniil-Sakharov/RocketFactory/order/internal/model/dto"
+	dto "github.com/Daniil-Sakharov/RocketFactory/order/internal/service/dto"
 
 	mock "github.com/stretchr/testify/mock"
 )

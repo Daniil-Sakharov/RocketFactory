@@ -8,7 +8,7 @@ import (
 	context "context"
 
 	domain "github.com/Daniil-Sakharov/RocketFactory/order/internal/model/domain"
-	dto "github.com/Daniil-Sakharov/RocketFactory/order/internal/model/dto"
+	dto "github.com/Daniil-Sakharov/RocketFactory/order/internal/service/dto"
 
 	mock "github.com/stretchr/testify/mock"
 )

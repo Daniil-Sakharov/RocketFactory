@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/Daniil-Sakharov/RocketFactory/order/internal/model/domain"
-	"github.com/Daniil-Sakharov/RocketFactory/order/internal/model/dto"
+	"github.com/Daniil-Sakharov/RocketFactory/order/internal/service/dto"
 )
 
 type InventoryClient interface {

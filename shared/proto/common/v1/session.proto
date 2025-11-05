@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package common.v1;
+
+option go_package = "github.com/Daniil-Sakharov/RocketFactory/shared/pkg/proto/common/v1;common_v1";
+
+// Session - Информация о сессии пользователя
+message Session {
+  // UUID сессии
+  string session_uuid = 1;
+  // UUID пользователя, которому принадлежит сессия
+  string user_uuid = 2;
+}

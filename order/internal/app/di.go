@@ -3,6 +3,7 @@ package app
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/IBM/sarama"
 	_ "github.com/jackc/pgx/v5/stdlib"
@@ -215,6 +216,12 @@ func (d *diContainer) PostgresDB(ctx context.Context) *sqlx.DB {
 		if err != nil {
 			panic(fmt.Sprintf("Ошибка в подключении к PostgreSQL: %s\n", err.Error()))
 		}
+
+		// Настройки connection pool для предотвращения проблем с изоляцией транзакций
+		db.SetMaxOpenConns(25)                 // Максимальное количество открытых соединений
+		db.SetMaxIdleConns(5)                  // Максимальное количество idle соединений
+		db.SetConnMaxLifetime(5 * time.Minute) // Максимальное время жизни соединения (5 минут)
+		db.SetConnMaxIdleTime(1 * time.Minute) // Максимальное время простоя соединения (1 минута)
 
 		err = db.Ping()
 		if err != nil {
